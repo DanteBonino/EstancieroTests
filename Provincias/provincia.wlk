@@ -24,4 +24,10 @@ class Provincia{
         const cantidadEstanciasDelCampo = unCampo.cantidadEstancias()
         campos.all{campo => campo.noTieneMasEstanciasQue(cantidadEstanciasDelCampo)}
     }
+
+    /* Metodos que surgieron por tests */
+    method agregarCampo(unCampo){
+        unCampo.asignarProvincia(self)
+        campos.add(unCampo)
+    }
 }

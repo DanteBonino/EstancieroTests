@@ -1,6 +1,7 @@
 class Campo{
     var duenio = banco
     var cantidadDeEstancias = 0
+    const provincia
 
     /* Punto 1 a */
     method duenio () = duenio
@@ -21,4 +22,10 @@ class Campo{
     }
 
     method noTieneMasEstanciasQue(unaCantidad) = cantidadDeEstancias <= unaCantidad
+
+    /* Metodos que surgieron por tests */
+    method asignarProvincia(unaProvincia){
+        //self.validarQueNoPertenezcaAOtraProvincia
+        provincia = unaProvincia
+    }
 }

@@ -1,0 +1,68 @@
+import jugador.*
+import banco.*
+import provincia.*
+import campo.*
+import juego.*
+
+const provincia5      = new Provincia()
+const dante  	      = new Jugador()
+const provincia1      = new Provincia()
+const campo1 	      = new Campo(valorDeCompra = 500, renta = 2000, provincia = provincia1, precioPorEstancia = 200)
+const campo2 	      = new Campo(valorDeCompra = 200, renta = 10000, provincia = provincia1, precioPorEstancia = 100)
+const fede 	 	 	  = new Jugador()
+const empresaDelBanco = new Empresa(valorDeCompra =  600)
+const campoDeFede 	  = new Campo(renta = 2000, valorDeCompra = 500, duenio = fede, precioPorEstancia = 300, provincia = provincia5)
+const campoDeDante    = new Campo(renta = 2000, valorDeCompra = 500, duenio = dante, precioPorEstancia = 300, provincia = provincia5)
+const empresaDeDante  = new Empresa(valorDeCompra =  600, duenio = dante)
+const empresaDeFede   = new Empresa(valorDeCompra =  600, duenio = fede)
+const juego	          = new Juego()
+const tablero         = new Tablero()
+
+
+describe "Punto 1"{
+
+	method initialize(){
+		provincia1.agregarCampo(campo1)
+		provincia1.agregarCampo(campo2)
+		dante.cobrar(5000)
+	}
+	
+	test "obtengo los duenios de los campos, sólo el banco es duenio de todas las propiedades"{
+		const duenios = provincia1.dueniosDeCampos()
+		assert.equals(#{banco}, duenios)
+	}
+	
+	test "obtengo duenios de los campos, el banco y dante son duenios"{
+		campo2.duenio(dante)
+		const duenios = provincia1.dueniosDeCampos()
+		assert.equals(#{banco, dante}, duenios)
+	}
+	
+	test "El campo1 no puede construir por que su provincia no es monopolio"{
+		campo2.duenio(dante)
+		assert.throwsExceptionWithType(noMonopolio,{campo1.construirEstancia()})
+	}
+	
+	test "El campo1 no puede construir porque en su provincia no todos tienen menos o igual cantidad de estancias que él"{
+		campo1.duenio(dante)
+		campo2.duenio(dante)
+		campo2.construirEstancia()
+		assert.throwsExceptionWithType(noConstruccionPareja,{campo1.construirEstancia()})
+	}
+	
+	test "El campo1 puede construir sin problemas y se le paga al banco"{
+		campo1.duenio(dante)
+		campo2.duenio(dante)
+		assert.doesNotThrowException{campo1.construirEstancia()}
+		assert.equals(4800, dante.dinero())
+		assert.equals(200, banco.dinero())
+	}
+
+    test "El campo1 puede construir sin problemas, pero su duenio no puede pagarle al banco"{
+        campo1.duenio(dante)
+		campo2.duenio(dante)
+        dante.pagar(5000)
+		assert.throwsExceptionWithType(noPuedeRealizarElPago, {campo1.construirEstancia()})
+    }
+	
+}
