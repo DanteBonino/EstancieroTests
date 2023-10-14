@@ -6,11 +6,27 @@ class Juego {
 	const property jugadores = []
 	var property estaTerminado = false
 	const tablero = new Tablero()
+
 	method empezar() {
 		if (not self.estaTerminado()) {
 			jugadores.forEach { jugador => self.queJuegue(jugador) }
 		}
 	}
+
+	/* Punto 9 */
+	method queJuegue(unJugador){
+		const valorDeDadosObtenido = unJugador.tirarDados()
+		self.hacerJugarTirando(unJugador, valorDeDadosObtenidos)
+	}
+
+	method hacerJugarTirando(unJugador, unValor){
+		const casillerosARecorrer = tablero.casillerosDesdeHasta(unJugador.posicionActual(), valorDeDadosObtenido)
+		unJugador.moverseSobre(casillerosARecorrer)
+	}
+
+}
+
+/*
 	method queJuegue(unJugador) {
 		try{
 			const numeroDeCasilleros = unJugador.tirarDados()
@@ -32,4 +48,6 @@ class Juego {
 	method agregarJugador(unJugador){
 		jugadores.add(unJugador)
 	}
-}
+
+
+ */
