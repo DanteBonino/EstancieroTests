@@ -324,3 +324,22 @@ describe "Punto 8"{
 	 Seguir haciendo los tests  (propiedades de otro jugador, propiedades del banco, casos de falla)
 	  */
 }
+
+describe "Punto 9"{
+	test "Dante juega tirando un número random en un tablero que sólo tiene salida y premioGanadero"{
+		juego.queJuegue(dante)
+		assert.that(dante.esSuPosicionActual(salida) or dante.esSuPosicionActual(premioGanadero))
+	}
+	
+	test "Dante saca 2 en los dados y debería caer en salida, el tablero sólo tiene salida y premioGanadero"{
+		juego.hacerJugarTirando(dante, 2)
+		assert.that(dante.esSuPosicionActual(salida))
+		assert.equals(5000, dante.dinero()) //Paso por salida y cayo en salida
+	}
+	
+	test "Dante saca 3 en los dados y debería caer en premioGanadero, el tablero sólo tiene salida y premioGanadero"{
+		juego.hacerJugarTirando(dante, 3)
+		assert.that(dante.esSuPosicionActual(premioGanadero))
+		assert.equals(7500, dante.dinero()) //Paso por salida y cayó en premio ganadero
+	}
+}
