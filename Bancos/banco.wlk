@@ -5,4 +5,9 @@ class banco inherits Acreedor{
     method cobrar(unMonto){
         dinero += unMonto
     }
+
+    /* Punto 7 */
+    method accionDeTitularidadSobrePropiedad (unJugador, unaPropiedad){
+        unJugador.comprar(unaPropiedad)
+    }
 }

@@ -40,8 +40,16 @@ class Campo inherits Casillero{
     method rentaPara(_unJugador){
         return valorDeRenta * (2 ** cantidadDeEstancias)
     }
+
+    /* Punto 7 */
+    override method cayo(unJugador){
+        duenio.accionDeTitularidadSobrePropiedad(unJugador, self)
+    }
 }
 
 class CampoV2 inherits Propiedad{
     /* Todo igual pero sacas duenio pq ya lo hereda de Propiedad*/
+
+    /* Punto 7 */
+    //No se agrega el cayo acá pq lo heredan de Propiedad
 }

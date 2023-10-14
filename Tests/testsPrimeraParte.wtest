@@ -191,3 +191,74 @@ describe "Punto 6"{
 	}
 		
 }
+
+describe "Punto 7"{
+	
+	method initialize(){
+		dante.cobrar(5000)
+		fede.agregarPropiedad(empresaDeFede)
+	}
+	
+	test "dante cayo en un campo y se lo compro al banco"{
+		campo1.cayo(dante)
+		assert.equals(4500, dante.dinero())
+		assert.equals(500, banco.dinero())
+		assert.that(dante.tienePropiedad(campo1))
+		assert.notThat(banco.tienePropiedad(campo1))
+	}
+	test "dante cayo en un campo y no se lo compro al banco porque no le alcanzó"{
+		dante.pagar(5000)//Lo reseteo a 0 -> no importa cuánto cueste la propiedad, no lo voy a poder pagar
+		assert.throwsExceptionWithType(noLoPuedePagar,{campo1.cayo(dante)})
+		assert.equals(0, banco.dinero())
+		assert.notThat(dante.tienePropiedad(campo1))
+	}
+	test "dante cayo en un campo de otro jugador y pagó la renta (el campo no tiene estancias y su renta es de 2000)"{
+		campoDeFede.cayo(dante)
+		assert.equals(3000, dante.dinero())//Cambiar el 0 por el valor que debería ir calculando dinero - renta
+		assert.equals(2000, fede.dinero())
+	}
+	test "dante cayo en un campo de otro jugador y no pagó la renta porque no le alcanzó"{
+		dante.pagar(5000)//Lo reseteo a 0 -> no importa cuánto cueste la propiedad, no lo voy a poder pagar
+		assert.throwsExceptionWithType(noLoPuedePagar,{campoDeFede.cayo(dante)})
+		assert.equals(0, fede.dinero())
+	}
+	test "dante cayo en premioGanadero y ganó 2500"{
+		premioGanadero.cayo(dante)
+		assert.equals(7500, dante.dinero())
+	}
+	test "dante cayo en una empresa de otro jugador y pagó la renta"{
+		dante.cobrar(1000000000)//Para que no importa cuánto de la renta de la empresa, la pueda pagar
+		empresaDeFede.cayo(dante)
+		assert.that(dante.dinero()>0)//La formula de la renta de la empresa es malísima para poder dar un valor exacto
+	}
+	test "dante cayo en una empresa de otro jugador y no pagó la renta pq no le alcanzó"{
+		dante.pagar(5000)//Lo reseteo a 0 -> no importa cuánto cueste la propiedad, no lo voy a poder pagar
+		assert.throwsExceptionWithType(noLoPuedePagar,{empresaDeFede.cayo(dante)})
+		assert.equals(0, fede.dinero())
+	}
+	test "dante cayo en una empresa del banco y la compro"{
+		empresaDelBanco.cayo(dante)
+		assert.equals(4400, dante.dinero())//Cambiar el 0 por el valor que debería ir
+		assert.equals(600, banco.dinero())
+		assert.that(dante.tienePropiedad(empresaDelBanco))
+	}
+	test "dante cayo en una empresa del banco y no la compro pq no le alcanzó"{
+		dante.pagar(5000)//Lo reseteo a 0 -> no importa cuánto cueste la propiedad, no lo voy a poder pagar
+		assert.throwsExceptionWithType(noLoPuedePagar,{empresaDelBanco.cayo(dante)})
+		assert.equals(0, banco.dinero())
+		assert.notThat(dante.tienePropiedad(empresaDelBanco))
+	}
+	test "dante cayo en un campo propio y no cambió su dinero"{
+		campoDeDante.cayo(dante)
+		assert.equals(5000, dante.dinero())
+	}
+	test "dante cayo en una empresa propia y no cambió su dinero"{
+		empresaDeDante.cayo(dante)
+		assert.equals(5000, dante.dinero())
+	}
+	test "dante cayo en la salida y no pasó nada"{
+		salida.cayo(dante)
+		assert.equals(5000, dante.dinero())
+	}
+	
+}

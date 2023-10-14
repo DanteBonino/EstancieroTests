@@ -20,6 +20,23 @@ class Jugador inherits Acreedor{
 
 	method tirarUnDado() = 1.randomUpTo(6).truncate(0)
 
+	/* Punto 7 */
+	override method accionDeTitularidadSobrePropiedad (unJugador, unaPropiedad){
+		if(not self === unJugador){
+			self.cobrarRentaA(unJugador, unaPropiedad)
+		}
+	}
+
+	method cobrarRenta(otroJugador, unaPropiedad){
+		const rentaAPagar = unaPropiedad.rentaPara(unJugador)
+		otroJugador.pagarA(self, rentaAPagar)
+	}
+
+	method comprar(unaPropiedad){
+		self.pagarA(banco, unaPropiedad.valorDeCompra())// Por ahora siempre se compra al banco, si no se puede hacer unaPropiedad.duenio()
+		self.agregarPropiedad(unaPropiedad)
+	}
+
 	/* Metodos surgidos por tests */
 	method agregarPropiedad(unaPropiedad){
 		unaPropiedad.duenio(self)

@@ -24,4 +24,8 @@ class Acreedor{
 		if(unMonto > dinero) throw noPuedeRealizarElPago
 	}
 
+    method accionDeTitularidadSobrePropiedad(unJugador, unaPropiedad)//La usan el banco y los jugadores, pero no comparten implemetanción
+
+    /* Métodos que surgieron por tests */
+    method tienePropiedad(unaPropiedad) = propiedades.contains(unaPropiedad) and unaPropiedad.duenio() === self //Los dos o uno?
 }
