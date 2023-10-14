@@ -1,5 +1,5 @@
 class Campo{
-    var duenio = banco
+    var property duenio = banco
     var cantidadDeEstancias = 0
     const provincia
 
@@ -22,6 +22,9 @@ class Campo{
     }
 
     method noTieneMasEstanciasQue(unaCantidad) = cantidadDeEstancias <= unaCantidad
+
+    /* Punto 2a */
+    method sosEmpresa() = false
 
     /* Metodos que surgieron por tests */
     method asignarProvincia(unaProvincia){

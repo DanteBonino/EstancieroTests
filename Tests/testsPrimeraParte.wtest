@@ -66,3 +66,22 @@ describe "Punto 1"{
     }
 	
 }
+
+describe "Punto 2"{
+
+	method initialize(){
+		dante.agregarPropiedad(empresaDelBanco)
+	}
+	
+	test "Las empresas entienden sosEmpresa() y da true"{
+		assert.that(empresaDelBanco.sosEmpresa())
+	}
+	
+	test "Los campos entienden sosEmpresa() y da false"{
+		assert.notThat(campo1.sosEmpresa())
+	}
+	
+	test "Dante tiene una empresa"{
+		assert.equals(1, dante.cantidadEmpresasPropias())
+	}
+}

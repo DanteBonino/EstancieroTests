@@ -1,5 +1,6 @@
 import exception.*
 class Jugador{
+	const propiedades = new Set()
 	/* Punto 1 b */ 
 	method pagarEstancia(costoDeConstruccionEstancia){
 		self.pagarA(banco, costoDeConstruccionEstancia)
@@ -17,6 +18,17 @@ class Jugador{
 
 	method pagar(unMonto){
 		dinero -= unMonto
+	}
+
+	/* Punto 2b */
+	method cantidadEmpresasPropias(){
+		return propiedades.count{unaPropiedad => unaPropiedad.sosEmpresa()}
+	}
+
+	/* Metodos surgidos por tests */
+	method agregarPropiedad(unaPropiedad){
+		unaPropiedad.duenio(self)
+		propiedades.add(unaPropiedad)
 	}
 }
 
