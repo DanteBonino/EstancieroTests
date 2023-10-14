@@ -123,3 +123,48 @@ describe "Punto 4"{
 	}
 	
 }
+
+describe "Punto 5"{
+	
+	method initialize(){
+		dante.cobrar(5000)
+        banco.cobrar(5000)
+	}
+	
+	test "dante paga al banco una suma que no lo supera económicamente"{
+		assert.doesNotThrowException{dante.pagarA(banco, 500)}
+		assert.equals(5500, banco.dinero())
+        assert.equals(4500, dante.dinero())
+	}
+	
+	test "dante le paga a fede una suma que no lo supera económicamente"{
+		assert.doesNotThrowException{dante.pagarA(fede, 500)}
+		assert.equals(500, fede.dinero())
+        assert.equals(4500, dante.dinero())
+	}
+	
+	test "dante le paga al banco una suma que lo supera económicamente y tira error"{
+		assert.throwsExceptionWithType(noLoPuedePagar,{dante.pagarA(banco, 50000)})
+		assert.equals(5000, banco.dinero())
+	}
+	
+	test "dante le paga a fede una suma que lo supera económicamente y tira error"{
+		assert.throwsExceptionWithType(noLoPuedePagar,{dante.pagarA(fede, 50000)})
+		assert.equals(0, fede.dinero())
+	}
+
+    //Se podría testear si el banco le puede o no pagar a otro jugador, pero todavía eso no surgió en el enunciado
+
+    test "el banco le paga a un jugador una suma que no lo supera económicamente"{
+        assert.doesNotThrowException{banco.pagarA(dante, 500)}
+        assert.equals(5500, dante.dinero())
+        assert.equals(4500, banco.dinero())
+    }
+
+    test "el banco le paga a dante una suma que lo supera económicamente y tira error"{
+		assert.throwsExceptionWithType(noLoPuedePagar,{banco.pagarA(dante, 50000)})
+		assert.equals(5000, dante.dinero())
+        assert.equals(5000, banco.dinero())
+	}
+	
+}

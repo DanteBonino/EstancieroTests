@@ -1,23 +1,11 @@
 import exception.*
-class Jugador{
-	const propiedades = new Set()
+import acreedor.wlk
+
+class Jugador inherits Acreedor{
+
 	/* Punto 1 b */ 
 	method pagarEstancia(costoDeConstruccionEstancia){
 		self.pagarA(banco, costoDeConstruccionEstancia)
-	}
-
-	method pagarA(unAcreedor, unMonto){
-		self.validarPosibilidadDePagar(unMonto)
-		self.pagar(unMonto)
-		unAcreedor.cobrar(unMonto)
-	}
-
-	method validarPosibilidadDePagar(unMonto){
-		if(unMonto > dinero) throw noPuedeRealizarElPago
-	}
-
-	method pagar(unMonto){
-		dinero -= unMonto
 	}
 
 	/* Punto 2b */
