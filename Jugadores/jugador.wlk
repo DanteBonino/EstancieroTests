@@ -25,6 +25,13 @@ class Jugador{
 		return propiedades.count{unaPropiedad => unaPropiedad.sosEmpresa()}
 	}
 
+	/* Punto 3 */
+	method tirarDados(){
+		return self.tirarUnDado() + self.tirarUnDado()
+	}
+
+	method tirarUnDado() = 1.randomUpTo(6).truncate(0)
+
 	/* Metodos surgidos por tests */
 	method agregarPropiedad(unaPropiedad){
 		unaPropiedad.duenio(self)

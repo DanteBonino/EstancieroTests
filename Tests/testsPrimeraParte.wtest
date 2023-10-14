@@ -85,3 +85,19 @@ describe "Punto 2"{
 		assert.equals(1, dante.cantidadEmpresasPropias())
 	}
 }
+
+describe "Punto 3"{
+	
+	
+	test "Dante tira un dado y da un numero entre 1 y 6 (entero)"{
+		const valorDeDado = dante.tirarUnDado()
+		assert.that(valorDeDado.between(1,6))
+		assert.that(valorDeDado.isInteger())
+	}
+	
+	test "Dante tira ambos dados obteniendo un valor entero entre 2 y 12"{
+		const valorObtenido = dante.tirarDados()
+		assert.that(valorObtenido.between(2,12))
+		assert.that(valorObtenido.isInteger())
+	}
+}
