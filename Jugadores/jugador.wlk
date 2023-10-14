@@ -1,4 +1,27 @@
-class Jugador inhertis Acreedor{
+import exception.*
+class Jugador{
+	/* Punto 1 b */ 
+	method pagarEstancia(costoDeConstruccionEstancia){
+		self.pagarA(banco, costoDeConstruccionEstancia)
+	}
+
+	method pagarA(unAcreedor, unMonto){
+		self.validarPosibilidadDePagar(unMonto)
+		self.pagar(unMonto)
+		unAcreedor.cobrar(unMonto)
+	}
+
+	method validarPosibilidadDePagar(unMonto){
+		if(unMonto > dinero) throw noPuedeRealizarElPago
+	}
+
+	method pagar(unMonto){
+		dinero -= unMonto
+	}
+}
+
+
+/*
     var property posicionActual = salida
 	var turnosRestantesPreso    = 0
     method tirarDados() {
@@ -60,4 +83,6 @@ class Jugador inhertis Acreedor{
 	method perderTurno(){
 		turnosRestantesPreso --
 	}
-}
+
+
+*/
