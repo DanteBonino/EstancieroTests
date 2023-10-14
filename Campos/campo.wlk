@@ -2,6 +2,7 @@ class Campo{
     var property duenio = banco
     var cantidadDeEstancias = 0
     const provincia
+    var valorDeRenta
 
     /* Punto 1 a */
     method duenio () = duenio
@@ -30,5 +31,10 @@ class Campo{
     method asignarProvincia(unaProvincia){
         //self.validarQueNoPertenezcaAOtraProvincia
         provincia = unaProvincia
+    }
+
+    /* Punto 4 */
+    method rentaPara(_unJugador){
+        return valorDeRenta * (2 ** cantidadDeEstancias)
     }
 }

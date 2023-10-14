@@ -101,3 +101,25 @@ describe "Punto 3"{
 		assert.that(valorObtenido.isInteger())
 	}
 }
+
+describe "Punto 4"{
+	
+	method initialize(){
+		fede.agregarPropiedad(empresaDelBanco)
+	}
+	
+	test "dante debería pagar una renta de 2000 en el campo1 sin estancias"{
+		assert.equals(2000, campo1.rentaPara(dante))
+	}
+	
+	test "El campo1  me dice su renta teniendo 1 estancia, debería ser el doble"{
+		campo1.duenio(fede)
+		campo1.construirEstancia(1)
+		assert.equals(4000, campo1.rentaPara(dante))
+	}
+	
+	test "La empresa es de un duenio que sólo tiene una empresa y el valor a cobrar esta entre 60000 y 360000"{
+		assert.that(empresaDelBanco.rentaPara(dante).between(60000, 360000))
+	}
+	
+}
