@@ -1,4 +1,7 @@
-class Campo{
+import propiedad.*
+import casillero.*
+
+class Campo inherits Casillero{
     var property duenio = banco
     var cantidadDeEstancias = 0
     const provincia
@@ -37,4 +40,8 @@ class Campo{
     method rentaPara(_unJugador){
         return valorDeRenta * (2 ** cantidadDeEstancias)
     }
+}
+
+class CampoV2 inherits Propiedad{
+    /* Todo igual pero sacas duenio pq ya lo hereda de Propiedad*/
 }

@@ -168,3 +168,26 @@ describe "Punto 5"{
 	}
 	
 }
+
+describe "Punto 6"{
+	test "dante pasa por un campo y no cambia su dinero"{
+		campo1.paso(dante)
+		assert.equals(0, dante.dinero())
+	}
+	
+	test "dante pasa por una empresa y no cambia su dinero"{
+		empresaDelBanco.paso(dante)
+		assert.equals(0, dante.dinero())
+	}
+	
+	test "dante pasa por la salida y gana 5000"{
+		salida.paso(dante)
+		assert.equals(5000, dante.dinero())
+	}
+	
+	test "dante pasa por premioGanadero y no cambia su dinero"{
+		premioGanadero.paso(dante)
+		assert.equals(0, dante.dinero())
+	}
+		
+}
