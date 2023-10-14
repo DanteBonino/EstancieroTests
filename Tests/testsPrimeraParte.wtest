@@ -262,3 +262,65 @@ describe "Punto 7"{
 	}
 	
 }
+
+describe "Punto 8"{
+	test "dante recibe una lista de casilleros en la que el último es un campo suyo, entonces su última posicion es dicho campo y no cambia su dinero"{
+		dante.moverseSobre([campo1, campoDeDante])
+		assert.that(dante.esSuPosicionActual(campoDeDante))
+		assert.equals(0, dante.dinero())
+	}
+	
+	test "dante recibe una lista de casilleros en la que el último es una empresa suya, entonces su última posicion es dicha empresa y no cambia su dinero"{
+		dante.moverseSobre([campo1, campoDeDante, empresaDeDante])
+		assert.that(dante.esSuPosicionActual(empresaDeDante))
+		assert.equals(0, dante.dinero())
+	}
+	
+	test "dante recibe una lista de casilleros en la que el último es la salida, entonces su última posicion es la salida y aumenta 5000"{
+		dante.moverseSobre([campo1, campoDeDante, salida])
+		assert.that(dante.esSuPosicionActual(salida))
+		assert.equals(5000, dante.dinero())
+	}
+	
+	test "dante recibe una lista de casilleros en la que el último es el premioGanadero, entonces su última posicion es el premioGanadero y aumenta 2500$"{
+		dante.moverseSobre([campo1, campoDeDante, premioGanadero])
+		assert.that(dante.esSuPosicionActual(premioGanadero))
+		assert.equals(2500, dante.dinero())
+	}
+	
+    test "dante recibe una lista de casilleros en la que el último es un campo del banco, entonces su última posicion es ese campo y lo compra"{
+
+    }
+
+    test "dante recibe una lista de casilleros en la que el último es un campo del banco, entonces su última posicion es ese campo y no le alcanza la plata para comprarlo"{
+
+    }
+
+    test "dante recibe una lista de casilleros en la que el último es una empresa del banco, entonces su última posicion es esa empresa y la compra"{
+        
+    }
+
+    test "dante recibe una lista de casilleros en la que el último es una empresa del banco, entonces su última posicion es esa empresa y no le alcanza para comprarla"{
+        
+    }
+
+    test "dante recibe una lista de casilleros en la que el último es un campo de otro jugador, entonces su última posicion es ese campo y paga la renta"{
+        
+    }
+
+    test "dante recibe una lista de casilleros en la que el último es un campo de otro jugador, entonces su última posicion es ese campo y no le alcanza para pagar la renta"{
+        
+    }
+
+    test "dante recibe una lista de casilleros en la que el último es una empresa de otro jugador, entonces su última posicion es esa empresa y paga la renta"{
+        
+    }
+
+    test "dante recibe una lista de casilleros en la que el último es una empresa de otro jugador, entonces su última posicion es esa empresa y no le alcanza para pagar la renta"{
+        
+    }
+	
+	/*
+	 Seguir haciendo los tests  (propiedades de otro jugador, propiedades del banco, casos de falla)
+	  */
+}

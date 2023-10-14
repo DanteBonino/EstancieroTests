@@ -2,6 +2,7 @@ import exception.*
 import acreedor.wlk
 
 class Jugador inherits Acreedor{
+	var propiedadActual
 
 	/* Punto 1 b */ 
 	method pagarEstancia(costoDeConstruccionEstancia){
@@ -37,11 +38,29 @@ class Jugador inherits Acreedor{
 		self.agregarPropiedad(unaPropiedad)
 	}
 
+	/* Punto 8 */
+	method moverseSobre(unosCasilleros){
+		const ultimoCasillero = unosCasilleros.last()
+		self.pasarPor(unosCasilleros)
+		self.cayoEn(ultimoCasillero)
+		posicionActual = ultimoCasillero
+	}
+
+	method pasarPor(unosCasilleros){
+		unosCasilleros.forEach{unCasillero => unCasillero.paso(self)}
+	}
+
+	method cayoEn(unCasillero){
+		unCasillero.cayo(self)
+	}
+
 	/* Metodos surgidos por tests */
 	method agregarPropiedad(unaPropiedad){
 		unaPropiedad.duenio(self)
 		propiedades.add(unaPropiedad)
 	}
+
+	method esSuPosicionActual(unCasillero) = posicionActual === unCasillero
 }
 
 
