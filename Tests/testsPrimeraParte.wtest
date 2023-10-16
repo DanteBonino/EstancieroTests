@@ -1,68 +1,71 @@
-import jugador.*
-import banco.*
-import provincia.*
-import campo.*
 import juego.*
+import tablero.*
+import jugador.*
+import propiedad.*
+import campo.*
+import empresa.*
+import casillerosEspeciales.*
+import provincia.*
+import excepciones.*
 
-const provincia5      = new Provincia()
-const dante  	      = new Jugador()
-const provincia1      = new Provincia()
-const campo1 	      = new Campo(valorDeCompra = 500, renta = 2000, provincia = provincia1, precioPorEstancia = 200)
-const campo2 	      = new Campo(valorDeCompra = 200, renta = 10000, provincia = provincia1, precioPorEstancia = 100)
-const fede 	 	 	  = new Jugador()
-const empresaDelBanco = new Empresa(valorDeCompra =  600)
-const campoDeFede 	  = new Campo(renta = 2000, valorDeCompra = 500, duenio = fede, precioPorEstancia = 300, provincia = provincia5)
-const campoDeDante    = new Campo(renta = 2000, valorDeCompra = 500, duenio = dante, precioPorEstancia = 300, provincia = provincia5)
-const empresaDeDante  = new Empresa(valorDeCompra =  600, duenio = dante)
-const empresaDeFede   = new Empresa(valorDeCompra =  600, duenio = fede)
-const juego	          = new Juego()
-const tablero         = new Tablero()
+const juego1 		   		  = new Juego()
+const tableroDelJuego1 		  = juego1.tablero()
+const dante            		  = new Jugador(juego = juego1, dinero = 2000)
+const fede             		  = new Jugador(juego = juego1, dinero = 2000)
+const bancoDelJuego1   		  = juego1.banco()
+const salidaDelJuego1  		  = tableroDelJuego1.salida()
+const premioGanaderoDelJuego1 = tableroDelJuego1.premioGanadero()
+const buenosAires			  = new Provincia()
+const formosa				  = new Provincia()
+const campoDeDante			  = new CampoV2(provincia = buenosAires, duenio = dante, valorDeRenta = 500, costoDeConstruccion = 500, valorDeCompra = 100)
+const campoDeFede			  = new CampoV2(provincia = formosa, duenio = fede, valorDeRenta = 500, costoDeConstruccion = 500, valorDeCompra = 100)
+const campoDelBanco			  = new CampoV2(provincia = buenosAires, duenio = bancoDelJuego1, valorDeRenta = 500, costoDeConstruccion = 200, valorDeCompra = 200)
+const empresaDeDante          = new EmpresaV2(duenio = dante, valorDeCompra = 100)
+const empresaDeFede           = new EmpresaV2(duenio = fede, valorDeCompra = 200)
+const empresaDelBanco         = new EmpresaV2(duenio = bancoDelJuego1, valorDeCompra = 300)
+
+const arrayDePrueba = #{campoDeDante}
 
 
 describe "Punto 1"{
 
 	method initialize(){
-		provincia1.agregarCampo(campo1)
-		provincia1.agregarCampo(campo2)
-		dante.cobrar(5000)
+		buenosAires.agregarCampo(campoDeDante)
+		buenosAires.agregarCampo(campoDelBanco)
+		formosa.agregarCampo(campoDeFede)
 	}
 	
-	test "obtengo los duenios de los campos, sólo el banco es duenio de todas las propiedades"{
-		const duenios = provincia1.dueniosDeCampos()
-		assert.equals(#{banco}, duenios)
+	test "obtengo los duenios de los campos de formosa, fede es el único duenio"{
+		const duenios = formosa.dueniosDeCampos()
+		assert.equals(#{fede}, duenios)
 	}
 	
-	test "obtengo duenios de los campos, el banco y dante son duenios"{
-		campo2.duenio(dante)
-		const duenios = provincia1.dueniosDeCampos()
-		assert.equals(#{banco, dante}, duenios)
+	test "obtengo duenios de los campos de buenosAires, el banco y dante son duenios"{
+		const duenios = buenosAires.dueniosDeCampos()
+		assert.equals(#{bancoDelJuego1, dante}, duenios)
 	}
 	
-	test "El campo1 no puede construir por que su provincia no es monopolio"{
-		campo2.duenio(dante)
-		assert.throwsExceptionWithType(noMonopolio,{campo1.construirEstancia()})
+	test "El campoDeDante no puede construir por que su provincia no es monopolio"{
+		assert.throwsExceptionWithType(noEsMonopolioLaProvincia,{campoDeDante.construirEstancia()})
 	}
 	
-	test "El campo1 no puede construir porque en su provincia no todos tienen menos o igual cantidad de estancias que él"{
-		campo1.duenio(dante)
-		campo2.duenio(dante)
-		campo2.construirEstancia()
-		assert.throwsExceptionWithType(noConstruccionPareja,{campo1.construirEstancia()})
+	test "El campoDeDante no puede construir porque en su provincia no todos tienen menos o igual cantidad de estancias que él"{
+		campoDelBanco.duenio(dante)
+		campoDelBanco.construirEstancia()
+		assert.throwsExceptionWithType(noEsConstruccionPareja,{campoDeDante.construirEstancia()})
 	}
 	
-	test "El campo1 puede construir sin problemas y se le paga al banco"{
-		campo1.duenio(dante)
-		campo2.duenio(dante)
-		assert.doesNotThrowException{campo1.construirEstancia()}
-		assert.equals(4800, dante.dinero())
-		assert.equals(200, banco.dinero())
+	test "El campoDeDante puede construir sin problemas y se le paga al banco"{
+		campoDelBanco.duenio(dante)
+		assert.doesNotThrowException{campoDeDante.construirEstancia()}
+		assert.equals(1500, dante.dinero())
+		assert.equals(500, bancoDelJuego1.dinero())
 	}
 
-    test "El campo1 puede construir sin problemas, pero su duenio no puede pagarle al banco"{
-        campo1.duenio(dante)
-		campo2.duenio(dante)
-        dante.pagar(5000)
-		assert.throwsExceptionWithType(noPuedeRealizarElPago, {campo1.construirEstancia()})
+    test "El campoDeDante puede construir sin problemas, pero dante no puede pagarle al banco"{
+		campoDelBanco.duenio(dante)
+        dante.pagar(2000)
+		assert.throwsExceptionWithType(noPuedeRealizarElPago, {campoDeDante.construirEstancia()})
     }
 	
 }
@@ -78,7 +81,7 @@ describe "Punto 2"{
 	}
 	
 	test "Los campos entienden sosEmpresa() y da false"{
-		assert.notThat(campo1.sosEmpresa())
+		assert.notThat(campoDeDante.sosEmpresa())
 	}
 	
 	test "Dante tiene una empresa"{
@@ -102,20 +105,21 @@ describe "Punto 3"{
 	}
 }
 
+
 describe "Punto 4"{
 	
 	method initialize(){
 		fede.agregarPropiedad(empresaDelBanco)
+		formosa.agregarCampo(campoDeFede)
 	}
 	
-	test "dante debería pagar una renta de 2000 en el campo1 sin estancias"{
-		assert.equals(2000, campo1.rentaPara(dante))
+	test "dante debería pagar una renta de 500 en el campoDeFede sin estancias"{
+		assert.equals(500, campoDeFede.rentaPara(dante))
 	}
 	
-	test "El campo1  me dice su renta teniendo 1 estancia, debería ser el doble"{
-		campo1.duenio(fede)
-		campo1.construirEstancia(1)
-		assert.equals(4000, campo1.rentaPara(dante))
+	test "El campoDeFede  me dice su renta teniendo 1 estancia, debería ser el doble"{
+		campoDeFede.construirEstancia()
+		assert.equals(1000, campoDeFede.rentaPara(dante))
 	}
 	
 	test "La empresa es de un duenio que sólo tiene una empresa y el valor a cobrar esta entre 60000 y 360000"{
@@ -127,67 +131,67 @@ describe "Punto 4"{
 describe "Punto 5"{
 	
 	method initialize(){
-		dante.cobrar(5000)
-        banco.cobrar(5000)
+		dante.cobrar(3000)
+        bancoDelJuego1.cobrar(5000)
 	}
 	
 	test "dante paga al banco una suma que no lo supera económicamente"{
-		assert.doesNotThrowException{dante.pagarA(banco, 500)}
-		assert.equals(5500, banco.dinero())
+		assert.doesNotThrowException{dante.pagarA(bancoDelJuego1, 500)}
+		assert.equals(5500, bancoDelJuego1.dinero())
         assert.equals(4500, dante.dinero())
 	}
 	
 	test "dante le paga a fede una suma que no lo supera económicamente"{
 		assert.doesNotThrowException{dante.pagarA(fede, 500)}
-		assert.equals(500, fede.dinero())
+		assert.equals(2500, fede.dinero())
         assert.equals(4500, dante.dinero())
 	}
 	
 	test "dante le paga al banco una suma que lo supera económicamente y tira error"{
-		assert.throwsExceptionWithType(noLoPuedePagar,{dante.pagarA(banco, 50000)})
-		assert.equals(5000, banco.dinero())
+		assert.throwsExceptionWithType(noPuedeRealizarElPago,{dante.pagarA(bancoDelJuego1, 50000)})
+		assert.equals(5000, bancoDelJuego1.dinero())
 	}
 	
 	test "dante le paga a fede una suma que lo supera económicamente y tira error"{
-		assert.throwsExceptionWithType(noLoPuedePagar,{dante.pagarA(fede, 50000)})
-		assert.equals(0, fede.dinero())
+		assert.throwsExceptionWithType(noPuedeRealizarElPago,{dante.pagarA(fede, 50000)})
+		assert.equals(2000, fede.dinero())
 	}
 
     //Se podría testear si el banco le puede o no pagar a otro jugador, pero todavía eso no surgió en el enunciado
 
     test "el banco le paga a un jugador una suma que no lo supera económicamente"{
-        assert.doesNotThrowException{banco.pagarA(dante, 500)}
+        assert.doesNotThrowException{bancoDelJuego1.pagarA(dante, 500)}
         assert.equals(5500, dante.dinero())
-        assert.equals(4500, banco.dinero())
+        assert.equals(4500, bancoDelJuego1.dinero())
     }
 
     test "el banco le paga a dante una suma que lo supera económicamente y tira error"{
-		assert.throwsExceptionWithType(noLoPuedePagar,{banco.pagarA(dante, 50000)})
+		assert.throwsExceptionWithType(noPuedeRealizarElPago,{bancoDelJuego1.pagarA(dante, 50000)})
 		assert.equals(5000, dante.dinero())
-        assert.equals(5000, banco.dinero())
+        assert.equals(5000, bancoDelJuego1.dinero())
 	}
 	
 }
 
 describe "Punto 6"{
 	test "dante pasa por un campo y no cambia su dinero"{
-		campo1.paso(dante)
-		assert.equals(0, dante.dinero())
+		campoDeDante.paso(dante)
+		assert.equals(2000, dante.dinero())
 	}
 	
 	test "dante pasa por una empresa y no cambia su dinero"{
 		empresaDelBanco.paso(dante)
-		assert.equals(0, dante.dinero())
+		assert.equals(2000, dante.dinero())
 	}
 	
 	test "dante pasa por la salida y gana 5000"{
-		salida.paso(dante)
-		assert.equals(5000, dante.dinero())
+		salidaDelJuego1.paso(dante)
+		assert.equals(7000, dante.dinero())
 	}
 	
 	test "dante pasa por premioGanadero y no cambia su dinero"{
-		premioGanadero.paso(dante)
-		assert.equals(0, dante.dinero())
+		premioGanaderoDelJuego1.paso(dante)
+		assert.equals(2000, dante.dinero())
 	}
 		
 }
@@ -195,57 +199,62 @@ describe "Punto 6"{
 describe "Punto 7"{
 	
 	method initialize(){
-		dante.cobrar(5000)
+		dante.cobrar(3000)
+		dante.agregarPropiedad(campoDeDante)
+		dante.agregarPropiedad(empresaDeDante)
+		fede.agregarPropiedad(campoDeFede)
 		fede.agregarPropiedad(empresaDeFede)
+		bancoDelJuego1.agregarPropiedad(campoDelBanco)
+		bancoDelJuego1.agregarPropiedad(empresaDelBanco)
 	}
 	
 	test "dante cayo en un campo y se lo compro al banco"{
-		campo1.cayo(dante)
-		assert.equals(4500, dante.dinero())
-		assert.equals(500, banco.dinero())
-		assert.that(dante.tienePropiedad(campo1))
-		assert.notThat(banco.tienePropiedad(campo1))
+		campoDelBanco.cayo(dante)
+		assert.equals(4800, dante.dinero())
+		assert.equals(200, bancoDelJuego1.dinero())
+		assert.that(dante.tienePropiedad(campoDelBanco))
+		assert.notThat(bancoDelJuego1.tienePropiedad(campoDelBanco))
 	}
 	test "dante cayo en un campo y no se lo compro al banco porque no le alcanzó"{
 		dante.pagar(5000)//Lo reseteo a 0 -> no importa cuánto cueste la propiedad, no lo voy a poder pagar
-		assert.throwsExceptionWithType(noLoPuedePagar,{campo1.cayo(dante)})
-		assert.equals(0, banco.dinero())
-		assert.notThat(dante.tienePropiedad(campo1))
+		assert.throwsExceptionWithType(noPuedeRealizarElPago,{campoDelBanco.cayo(dante)})
+		assert.equals(0, bancoDelJuego1.dinero())
+		assert.notThat(dante.tienePropiedad(campoDelBanco))
 	}
-	test "dante cayo en un campo de otro jugador y pagó la renta (el campo no tiene estancias y su renta es de 2000)"{
+	test "dante cayo en un campo de otro jugador y pagó la renta (el campo no tiene estancias y su renta es de 500)"{
 		campoDeFede.cayo(dante)
-		assert.equals(3000, dante.dinero())//Cambiar el 0 por el valor que debería ir calculando dinero - renta
-		assert.equals(2000, fede.dinero())
+		assert.equals(4500, dante.dinero())//Cambiar el 0 por el valor que debería ir calculando dinero - renta
+		assert.equals(2500, fede.dinero())
 	}
 	test "dante cayo en un campo de otro jugador y no pagó la renta porque no le alcanzó"{
 		dante.pagar(5000)//Lo reseteo a 0 -> no importa cuánto cueste la propiedad, no lo voy a poder pagar
-		assert.throwsExceptionWithType(noLoPuedePagar,{campoDeFede.cayo(dante)})
-		assert.equals(0, fede.dinero())
+		assert.throwsExceptionWithType(noPuedeRealizarElPago,{campoDeFede.cayo(dante)})
+		assert.equals(2000, fede.dinero())
 	}
 	test "dante cayo en premioGanadero y ganó 2500"{
-		premioGanadero.cayo(dante)
+		premioGanaderoDelJuego1.cayo(dante)
 		assert.equals(7500, dante.dinero())
 	}
 	test "dante cayo en una empresa de otro jugador y pagó la renta"{
-		dante.cobrar(1000000000)//Para que no importa cuánto de la renta de la empresa, la pueda pagar
+		dante.cobrar(1000000000)//Para que no importe cuánto tenga que pagar de la renta de la empresa, la pueda pagar
 		empresaDeFede.cayo(dante)
 		assert.that(dante.dinero()>0)//La formula de la renta de la empresa es malísima para poder dar un valor exacto
 	}
 	test "dante cayo en una empresa de otro jugador y no pagó la renta pq no le alcanzó"{
 		dante.pagar(5000)//Lo reseteo a 0 -> no importa cuánto cueste la propiedad, no lo voy a poder pagar
-		assert.throwsExceptionWithType(noLoPuedePagar,{empresaDeFede.cayo(dante)})
-		assert.equals(0, fede.dinero())
+		assert.throwsExceptionWithType(noPuedeRealizarElPago,{empresaDeFede.cayo(dante)})
+		assert.equals(2000, fede.dinero())
 	}
 	test "dante cayo en una empresa del banco y la compro"{
 		empresaDelBanco.cayo(dante)
-		assert.equals(4400, dante.dinero())//Cambiar el 0 por el valor que debería ir
-		assert.equals(600, banco.dinero())
+		assert.equals(4700, dante.dinero())//Cambiar el 0 por el valor que debería ir
+		assert.equals(300, bancoDelJuego1.dinero())
 		assert.that(dante.tienePropiedad(empresaDelBanco))
 	}
 	test "dante cayo en una empresa del banco y no la compro pq no le alcanzó"{
 		dante.pagar(5000)//Lo reseteo a 0 -> no importa cuánto cueste la propiedad, no lo voy a poder pagar
-		assert.throwsExceptionWithType(noLoPuedePagar,{empresaDelBanco.cayo(dante)})
-		assert.equals(0, banco.dinero())
+		assert.throwsExceptionWithType(noPuedeRealizarElPago,{empresaDelBanco.cayo(dante)})
+		assert.equals(0, bancoDelJuego1.dinero())
 		assert.notThat(dante.tienePropiedad(empresaDelBanco))
 	}
 	test "dante cayo en un campo propio y no cambió su dinero"{
@@ -257,7 +266,7 @@ describe "Punto 7"{
 		assert.equals(5000, dante.dinero())
 	}
 	test "dante cayo en la salida y no pasó nada"{
-		salida.cayo(dante)
+		salidaDelJuego1.cayo(dante)
 		assert.equals(5000, dante.dinero())
 	}
 	
@@ -265,27 +274,27 @@ describe "Punto 7"{
 
 describe "Punto 8"{
 	test "dante recibe una lista de casilleros en la que el último es un campo suyo, entonces su última posicion es dicho campo y no cambia su dinero"{
-		dante.moverseSobre([campo1, campoDeDante])
+		dante.moverseSobre([campoDeFede, campoDeDante])
 		assert.that(dante.esSuPosicionActual(campoDeDante))
-		assert.equals(0, dante.dinero())
+		assert.equals(2000, dante.dinero())
 	}
 	
 	test "dante recibe una lista de casilleros en la que el último es una empresa suya, entonces su última posicion es dicha empresa y no cambia su dinero"{
-		dante.moverseSobre([campo1, campoDeDante, empresaDeDante])
+		dante.moverseSobre([campoDeFede, campoDeDante, empresaDeDante])
 		assert.that(dante.esSuPosicionActual(empresaDeDante))
-		assert.equals(0, dante.dinero())
+		assert.equals(2000, dante.dinero())
 	}
 	
 	test "dante recibe una lista de casilleros en la que el último es la salida, entonces su última posicion es la salida y aumenta 5000"{
-		dante.moverseSobre([campo1, campoDeDante, salida])
-		assert.that(dante.esSuPosicionActual(salida))
-		assert.equals(5000, dante.dinero())
+		dante.moverseSobre([campoDeFede, campoDeDante, salidaDelJuego1])
+		assert.that(dante.esSuPosicionActual(salidaDelJuego1))
+		assert.equals(7000, dante.dinero())
 	}
 	
 	test "dante recibe una lista de casilleros en la que el último es el premioGanadero, entonces su última posicion es el premioGanadero y aumenta 2500$"{
-		dante.moverseSobre([campo1, campoDeDante, premioGanadero])
-		assert.that(dante.esSuPosicionActual(premioGanadero))
-		assert.equals(2500, dante.dinero())
+		dante.moverseSobre([campoDeFede, campoDeDante, premioGanaderoDelJuego1])
+		assert.that(dante.esSuPosicionActual(premioGanaderoDelJuego1))
+		assert.equals(4500, dante.dinero())
 	}
 	
     test "dante recibe una lista de casilleros en la que el último es un campo del banco, entonces su última posicion es ese campo y lo compra"{
@@ -327,19 +336,19 @@ describe "Punto 8"{
 
 describe "Punto 9"{
 	test "Dante juega tirando un número random en un tablero que sólo tiene salida y premioGanadero"{
-		juego.queJuegue(dante)
-		assert.that(dante.esSuPosicionActual(salida) or dante.esSuPosicionActual(premioGanadero))
+		juego1.queJuegue(dante)
+		assert.that(dante.esSuPosicionActual(salidaDelJuego1) or dante.esSuPosicionActual(premioGanaderoDelJuego1))
 	}
 	
 	test "Dante saca 2 en los dados y debería caer en salida, el tablero sólo tiene salida y premioGanadero"{
-		juego.hacerJugarTirando(dante, 2)
-		assert.that(dante.esSuPosicionActual(salida))
-		assert.equals(5000, dante.dinero()) //Paso por salida y cayo en salida
+		juego1.hacerJugarTirando(dante, 2)
+		assert.that(dante.esSuPosicionActual(salidaDelJuego1))
+		assert.equals(7000, dante.dinero()) //Paso por salida y cayo en salida
 	}
 	
 	test "Dante saca 3 en los dados y debería caer en premioGanadero, el tablero sólo tiene salida y premioGanadero"{
-		juego.hacerJugarTirando(dante, 3)
-		assert.that(dante.esSuPosicionActual(premioGanadero))
-		assert.equals(7500, dante.dinero()) //Paso por salida y cayó en premio ganadero
+		juego1.hacerJugarTirando(dante, 3)
+		assert.that(dante.esSuPosicionActual(premioGanaderoDelJuego1)) // Esto es falso por cómo está hecho el método para calcular los casilleros por los que se tiene que mover
+		assert.equals(9500, dante.dinero()) //Paso por salida y cayó en premio ganadero
 	}
 }

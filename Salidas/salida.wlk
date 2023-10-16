@@ -6,7 +6,7 @@ class Salida inherits Casillero{
     }
 }
 
-class Salida{
+class SalidaV2{
     method paso(unJugador){
         unJugador.cobrar(5000)
     }

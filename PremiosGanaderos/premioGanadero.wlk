@@ -1,15 +1,17 @@
+import casillero.*
+
 class PremioGanadero inherits Casillero{
     override method cayo(unJugador){
-        unJugador.cobra(2500)
+        unJugador.cobrar(2500)
     }
 }
 
 
-class PremioGanadero{
+class PremioGanaderoV2{
     method paso(_unJugador){
         //No pasa nada
     }
     method cayo(unJugador){
-        unJugador.cobra(2500)
+        unJugador.cobrar(2500)
     }
 }

@@ -1,8 +1,11 @@
-import exception.*
-import acreedor.wlk
+import excepciones.*
+import acreedor.*
 
 class Jugador inherits Acreedor{
-	var propiedadActual
+	const juego
+	var posicionActual = juego.salida()
+	const banco = juego.banco()
+	
 
 	/* Punto 1 b */ 
 	method pagarEstancia(costoDeConstruccionEstancia){
@@ -11,7 +14,7 @@ class Jugador inherits Acreedor{
 
 	/* Punto 2b */
 	method cantidadEmpresasPropias(){
-		return propiedades.count{unaPropiedad => unaPropiedad.sosEmpresa()}
+		return self.propiedades().count{unaPropiedad => unaPropiedad.sosEmpresa()}
 	}
 
 	/* Punto 3 */
@@ -23,13 +26,13 @@ class Jugador inherits Acreedor{
 
 	/* Punto 7 */
 	override method accionDeTitularidadSobrePropiedad (unJugador, unaPropiedad){
-		if(not self === unJugador){
+		if(not (self === unJugador)){
 			self.cobrarRentaA(unJugador, unaPropiedad)
 		}
 	}
 
-	method cobrarRenta(otroJugador, unaPropiedad){
-		const rentaAPagar = unaPropiedad.rentaPara(unJugador)
+	method cobrarRentaA(otroJugador, unaPropiedad){
+		const rentaAPagar = unaPropiedad.rentaPara(otroJugador)
 		otroJugador.pagarA(self, rentaAPagar)
 	}
 
@@ -53,12 +56,11 @@ class Jugador inherits Acreedor{
 	method cayoEn(unCasillero){
 		unCasillero.cayo(self)
 	}
+	
+	/* Punto 9 */
+	method posicionActual() = posicionActual
 
 	/* Metodos surgidos por tests */
-	method agregarPropiedad(unaPropiedad){
-		unaPropiedad.duenio(self)
-		propiedades.add(unaPropiedad)
-	}
 
 	method esSuPosicionActual(unCasillero) = posicionActual === unCasillero
 }

@@ -5,6 +5,8 @@ class Casillero{
 
     method cayo(unJugador){
     }
+    
+    method esCasilleroEspecial() = true
 }
 
 /*

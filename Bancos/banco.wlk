@@ -1,13 +1,9 @@
-class banco inherits Acreedor{
-    var dinero //Comun con Jugador
+import acreedor.*
 
-    /* Punto 1b */
-    method cobrar(unMonto){
-        dinero += unMonto
-    }
+class Banco inherits Acreedor{
 
     /* Punto 7 */
-    method accionDeTitularidadSobrePropiedad (unJugador, unaPropiedad){
+    override method accionDeTitularidadSobrePropiedad (unJugador, unaPropiedad){
         unJugador.comprar(unaPropiedad)
     }
 }

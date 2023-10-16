@@ -1,5 +1,7 @@
+import casillero.*
+
 class Propiedad{//Solo interfaz
-    var property duenio
+    var property duenio 
     var valorDeCompra
 
     method sosEmpresa()
@@ -15,13 +17,33 @@ class Propiedad{//Solo interfaz
     }
 
     method valorDeCompra () = valorDeCompra
+    
+    method cambiarDuenio(nuevoDuenio){
+    	duenio.eliminarPropiedad(self)
+    	self.duenio(nuevoDuenio)
+    }
 
 }
 
 class PropiedadV2 inherits Casillero{//Deja de ser interfaz y las propiedades herendan de ella
-    //Si heredase entonces tendría que
+    var property duenio 
+    var valorDeCompra
+
+    method sosEmpresa()
+
+    method rentaPara(unJugador)
+    
     override method cayo(unJugador){
-        //Igual
+       duenio.accionDeTitularidadSobrePropiedad(unJugador, self)
+    }
+    
+    method valorDeCompra () = valorDeCompra
+    
+    override method esCasilleroEspecial() = false
+    
+    method cambiarDuenio(nuevoDuenio){
+    	duenio.eliminarPropiedad(self)
+    	self.duenio(nuevoDuenio)
     }
 }
 
@@ -34,4 +56,5 @@ Esta duda surgió en el Punto 6
 
 Actualización Punto 7:
         -> Como ahora ambas propiedades aplican la misma implemetanción para cayo y paso, toma más fuerza la idea de que hereden de Propiedad y que Propiedad sea una clase
-        -> Por otro lado, Casillero quizá tiene más sentido que sólo sea una interfaz
+        -> Por otro lado, Casillero quizá tiene más sentido que sólo sea una interfaz 
+*/
