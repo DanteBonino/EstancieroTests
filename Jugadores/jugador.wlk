@@ -41,10 +41,10 @@ class Jugador inherits Acreedor{
 		otroJugador.pagarA(self, rentaAPagar)
 	}
 
-	method comprar(unaPropiedad){
+	/*method comprar(unaPropiedad){
 		self.pagarA(banco, unaPropiedad.valorDeCompra())// Por ahora siempre se compra al banco, si no se puede hacer unaPropiedad.duenio()
 		self.agregarPropiedad(unaPropiedad)
-	}
+	}*/
 
 	/* Punto 8 */
 	method moverseSobre(unosCasilleros){
@@ -120,6 +120,45 @@ class Jugador inherits Acreedor{
 	
 	override method esJugador () = true
 	
+	/* Punto 3 Parte 2 */
+	override method pagarA(unAcreedor, unMonto){
+		self.validarPosibilidadDePagar(unMonto)
+		super(unAcreedor, unMonto)
+	}
+	
+	override method validarPosibilidadDePagar(unMonto){
+		if(unMonto > self.dinero()) self.hipotecarPropiedadesHastaPoderPagar(unMonto)
+	}
+	
+	method hipotecarPropiedadesHastaPoderPagar(unMonto){
+		self.hipotecarPropiedad()
+		self.validarPosibilidadDePagar(unMonto)
+	}
+	
+	method hipotecarPropiedad(){
+		self.validarPosibilidadDeHipotecar()
+		const unaPropiedad = self.unaPropiedad()
+		banco.pagarHipoteca(self, unaPropiedad)
+	}
+	
+	method validarPosibilidadDeHipotecar(){
+		if (! self.tieneAlgunaPropiedad()) throw noPuedeRealizarElPago
+	}
+	
+	method tieneAlgunaPropiedad(){
+		return self.propiedades().size()>0 //Esto rompe el encapsulamiento?
+	}
+	
+	method unaPropiedad(){//No se lo pongo a Acreedor pq el banco  no lo usa para nada
+		return self.propiedades().anyOne() //Esto rompe el encapsulamiento?
+	}
+	
+	method comprar(unaPropiedad){
+		self.pagarA(banco, unaPropiedad.valorDeCompraActual())// Por ahora siempre se compra al banco, si no se puede hacer unaPropiedad.duenio()
+		unaPropiedad.liberar()
+		self.agregarPropiedad(unaPropiedad)
+	}
+	
 	/* Metodos surgidos por tests */
 
 	method esSuPosicionActual(unCasillero)   = posicionActual === unCasillero
@@ -128,6 +167,7 @@ class Jugador inherits Acreedor{
 		estrategiaDeCompra = unaEstrategia
 	}
 }
+	
 
 /*
     var property posicionActual = salida

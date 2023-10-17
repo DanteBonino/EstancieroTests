@@ -5,7 +5,7 @@ class Acreedor{
     var dinero 		           = 0
 
     method pagarA(unAcreedor, unMonto){//Un Acreedor puede ser un jugador o un banco, por ende ambos deben poder validar si pueden pagar algo, pagar algo y cobrar algo
-		self.validarPosibilidadDePagar(unMonto)
+		//self.validarPosibilidadDePagar(unMonto) Lo saco de acá? o Lo dejo?
 		self.pagar(unMonto)
 		unAcreedor.cobrar(unMonto)
 	}

@@ -104,4 +104,11 @@ class CampoV2 inherits Propiedad{
     }
     
     method provincia () = provincia
+    
+    /* Punto 3 Parte 3 */
+    override method valorDeHipoteca(){//Lo que paga el banco al jugador
+    	return  self.valorDeCompra()/2 + self.valorDeHipotecaPorEstancia() * cantidadDeEstancias 
+    }
+    
+    method valorDeHipotecaPorEstancia() = costoDeConstruccion / 2 
 }

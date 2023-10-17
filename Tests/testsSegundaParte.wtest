@@ -8,6 +8,7 @@ import casillerosEspeciales.*
 import provincia.*
 import excepciones.*
 import estrategiasDeCompra.*
+import estatus.*
 
 class TiradorDeDobles inherits Jugador{
 	override method tirarUnDado(){
@@ -39,7 +40,9 @@ const empresaDeFede           = new EmpresaV2(duenio = fede, valorDeCompra = 200
 const empresaDelBanco         = new EmpresaV2(duenio = bancoDelJuego1, valorDeCompra = 300, juego = juego1)
 const tiradorDeDobles		  = new TiradorDeDobles(juego = juego1)
 const tiradorDe7			  = new TiradorDeNoDobles(juego = juego1)
-
+const empresaDelBancoCara	  = new EmpresaV2(duenio = bancoDelJuego1, valorDeCompra = 50000, juego = juego1)
+const campoDelEjemplo		  = new CampoV2(provincia = buenosAires, duenio = bancoDelJuego1, valorDeRenta = 500, costoDeConstruccion = 100, valorDeCompra = 200, juego = juego1, cantidadDeEstancias = 2, estatus = hipotecada)
+const campoNoHipotecadoDe500  = new CampoV2(provincia = buenosAires, duenio = bancoDelJuego1, valorDeRenta = 500, costoDeConstruccion = 100, valorDeCompra = 500, juego = juego1)
 describe "Punto 1" {
 	
 	method initialize(){
@@ -193,4 +196,234 @@ describe "Punto 2"{
 		assert.that(bancoDelJuego1.tienePropiedad(empresaDelBanco))
 	}
 	
+}
+
+describe "Punto 3"{
+	method initialize(){
+		dante.cobrar(3000)
+		bancoDelJuego1.cobrar(5000)
+		bancoDelJuego1.agregarPropiedad(empresaDelBanco)
+		bancoDelJuego1.agregarPropiedad(empresaDelBancoCara)
+		bancoDelJuego1.agregarPropiedad(campoDelBanco)
+		bancoDelJuego1.agregarPropiedad(campoNoHipotecadoDe500)
+		fede.agregarPropiedad(campoDeFede)
+		fede.agregarPropiedad(empresaDeFede)
+	}
+	
+	test "dante paga al banco una suma que no lo supera económicamente"{
+		assert.doesNotThrowException{dante.pagarA(bancoDelJuego1, 500)}
+		assert.equals(5500, bancoDelJuego1.dinero())
+        assert.equals(4500, dante.dinero())
+	}
+	
+	test "dante le paga a fede una suma que no lo supera económicamente"{
+		assert.doesNotThrowException{dante.pagarA(fede, 500)}
+		assert.equals(2500, fede.dinero())
+        assert.equals(4500, dante.dinero())
+	}
+	
+	test "dante le paga al banco una suma que lo supera económicamente y tira error, no tiene propiedades para hipotecar"{
+		assert.throwsExceptionWithType(noPuedeRealizarElPago,{dante.pagarA(bancoDelJuego1, 50000)})
+		assert.equals(5000, bancoDelJuego1.dinero())
+	}
+	
+	test "dante le paga a fede una suma que lo supera económicamente y tira error, no tiene propiedades para hipotecar"{
+		assert.throwsExceptionWithType(noPuedeRealizarElPago,{dante.pagarA(fede, 50000)})
+		assert.equals(2000, fede.dinero())
+	}
+	
+	test "dante le paga al banco una suma que lo supera inicialmente económicamente, pero hipotecando logra pagarle"{
+		dante.agregarPropiedad(campoNoHipotecadoDe500)
+		dante.pagar(5000)
+		assert.doesNotThrowException{dante.pagarA(bancoDelJuego1, 100)}
+		assert.notThat(campoNoHipotecadoDe500.estaLibre())
+		assert.notThat(dante.tienePropiedad(campoNoHipotecadoDe500))
+		assert.that(bancoDelJuego1.tienePropiedad(campoNoHipotecadoDe500))
+		assert.equals(150, dante.dinero())
+	}
+	
+	test "dante le paga a fede una suma que lo supera inicialmente económicamente, pero hipotecando logra pagarle"{
+		dante.agregarPropiedad(campoNoHipotecadoDe500)
+		dante.pagar(5000)
+		assert.doesNotThrowException{dante.pagarA(fede, 100)}
+		assert.notThat(campoNoHipotecadoDe500.estaLibre())
+		assert.notThat(dante.tienePropiedad(campoNoHipotecadoDe500))
+		assert.that(bancoDelJuego1.tienePropiedad(campoNoHipotecadoDe500))
+		assert.equals(150, dante.dinero())
+	}
+
+    //Se podría testear si el banco le puede o no pagar a otro jugador, pero todavía eso no surgió en el enunciado
+
+    test "el banco le paga a un jugador una suma que no lo supera económicamente"{
+        assert.doesNotThrowException{bancoDelJuego1.pagarA(dante, 500)}
+        assert.equals(5500, dante.dinero())
+        assert.equals(4500, bancoDelJuego1.dinero())
+    }
+
+    test "el banco le paga a dante una suma que lo supera económicamente y tira error"{
+		assert.throwsExceptionWithType(noPuedeRealizarElPago,{bancoDelJuego1.pagarA(dante, 50000)})
+		assert.equals(5000, dante.dinero())
+        assert.equals(5000, bancoDelJuego1.dinero())
+	}
+	
+	
+	test "Un Jugador cae en un campo del banco, lo puede pagar, entonces lo compra normalmente"{
+		campoDelBanco.cayo(dante)
+		assert.equals(4800, dante.dinero())
+		assert.equals(5200, bancoDelJuego1.dinero())
+		assert.that(dante.tienePropiedad(campoDelBanco))
+		assert.notThat(bancoDelJuego1.tienePropiedad(campoDelBanco))
+	}
+	
+	test "Un Jugador cae en una empresa del banco, la puede pagar, entonces la compra normalmente"{
+		empresaDelBanco.cayo(dante)
+		assert.equals(4700, dante.dinero())//Cambiar el 0 por el valor que debería ir
+		assert.equals(5300, bancoDelJuego1.dinero())
+		assert.that(dante.tienePropiedad(empresaDelBanco))
+	}
+	
+	test "Un Jugador intenta comprar una propiedad que excede su nivel de vida, y no tiene propiedades para hipotecar, entonce no la compra"{
+		assert.throwsExceptionWithMessage("El acreedor no puede realizar el pago correspondiente debido a que su saldo es insuficiente", {empresaDelBancoCara.cayo(dante)})
+		assert.that(dante.dinero() < empresaDelBancoCara.valorDeCompra())
+		assert.that(bancoDelJuego1.tienePropiedad(empresaDelBancoCara))
+		assert.notThat(dante.tienePropiedad(empresaDelBancoCara))
+	}
+	
+	test "Una empresa se encuentra hipotecada, entonces su valor de compra actual es su valorDeCompra original * 1.5"{
+		empresaDelBanco.hipotecar()
+		assert.equals(300 * 1.5, empresaDelBanco.valorDeCompraActual())
+	}
+	
+	test "Un campo cuyo valor de compra original es 200 si se lo hipoteca pasa a valer 300"{
+		assert.equals(300, campoDelEjemplo.valorDeCompraActual())
+	}
+	
+	test "El valor que debe pagarle al jugador el banco por la hipoteca de una empresa cuyo costo de compra es 300 es igual a 150"{
+		assert.equals(150, empresaDelBanco.valorDeHipoteca())
+	}
+	
+	test "Un campo cuyo valor de compra original es 200 y el costo de construccion es 100, teniendo 2 estancias tiene un valor de hipoteca de 200"{
+		assert.equals(200, campoDelEjemplo.valorDeHipoteca())
+	}
+	
+	test "Un Jugador cae en un campo hipotecado y le alcanza para pagarlo, entonces lo compra y deja de estar hipotecado"{
+		campoDelEjemplo.cayo(dante)
+		assert.equals(4700, dante.dinero())
+		assert.that(dante.tienePropiedad(campoDelEjemplo))
+		assert.that(campoDelEjemplo.estaLibre())
+	}
+	
+	test "Un Jugador cae en una empresa hipotecada y le alcanza para pagarla, entonces la compra y deja de estar hipotecada"{
+		empresaDelBanco.hipotecar()
+		empresaDelBanco.cayo(dante)
+		assert.equals(4550, dante.dinero())
+		assert.that(dante.tienePropiedad(empresaDelBanco))
+		assert.that(empresaDelBanco.estaLibre())
+		assert.notThat(bancoDelJuego1.tienePropiedad(empresaDelBanco))
+	}
+	
+	test "Un Jugador cae en un campo, no le alcanza para pagarlo, entonces hipoteca x propiedades hasta poder comprarlo"{
+		campoDelEjemplo.liberar()
+		dante.pagar(5000)
+		dante.agregarPropiedad(campoDeDante)
+		dante.agregarPropiedad(campoDelBanco)
+		dante.agregarPropiedad(campoDeFede)
+		assert.doesNotThrowException({campoDelEjemplo.cayo(dante)})
+		assert.that(dante.dinero() == 0)
+		assert.that(dante.tienePropiedad(campoDelEjemplo))
+		assert.that(campoDelEjemplo.estaLibre())
+	}
+	
+	
+	test "Un Jugador cae en un campo hipotecado, no le alcanza para pagarlo, entonces hipoteca x propiedades hasta poder comprarlo"{
+		dante.pagar(5000)
+		dante.agregarPropiedad(campoDeDante)
+		dante.agregarPropiedad(campoDelBanco)
+		dante.agregarPropiedad(campoDeFede)
+		dante.agregarPropiedad(campoNoHipotecadoDe500)
+		assert.doesNotThrowException({campoDelEjemplo.cayo(dante)})
+		assert.that(dante.dinero() >= 0)
+		assert.that(dante.tienePropiedad(campoDelEjemplo))
+		assert.that(campoDelEjemplo.estaLibre())
+	}
+	
+	test "Un Jugador cae en una empresa, no le alcanza para pagarla, entonces hipoteca x propiedades hasta poder comprarla"{
+		dante.pagar(5000)
+		dante.agregarPropiedad(campoNoHipotecadoDe500)
+		dante.agregarPropiedad(campoDeFede)
+		assert.doesNotThrowException({empresaDelBanco.cayo(dante)})
+		assert.equals(0, dante.dinero())
+		assert.that(dante.tienePropiedad(empresaDelBanco))
+		assert.notThat(bancoDelJuego1.tienePropiedad(empresaDelBanco))
+		assert.notThat(dante.tienePropiedad(campoNoHipotecadoDe500))
+		assert.notThat(dante.tienePropiedad(campoDeFede))
+	}
+	
+	test "Un Jugador cae en una empresa hipotecada, no le alcanza para pagarla, entonces hipoteca x propiedades hasta poder comprarla"{
+		dante.pagar(5000)
+		empresaDelBanco.hipotecar()
+		dante.agregarPropiedad(campoNoHipotecadoDe500)//250
+		dante.agregarPropiedad(campoDeFede)//50
+		dante.agregarPropiedad(campoDeDante)//50
+		dante.agregarPropiedad(campoDelBanco)//100
+		assert.doesNotThrowException({empresaDelBanco.cayo(dante)})
+		assert.equals(0, dante.dinero())
+		assert.that(dante.tienePropiedad(empresaDelBanco))
+		assert.that(empresaDelBanco.estaLibre())
+		assert.notThat(bancoDelJuego1.tienePropiedad(empresaDelBanco))
+		assert.notThat(dante.tienePropiedad(campoNoHipotecadoDe500))
+		assert.notThat(dante.tienePropiedad(campoDeDante))
+		assert.notThat(dante.tienePropiedad(campoDeFede))
+		assert.notThat(dante.tienePropiedad(campoDelBanco
+			
+		))
+	}
+	
+	test "Un Jugador cae en un campo, no le alcanza para pagarlo, entonces hipoteca x propiedades hasta poder comprarlo, pero no le alcanza"{
+		dante.pagar(5000)
+		dante.agregarPropiedad(campoDeDante)
+		assert.throwsExceptionWithType(noPuedeRealizarElPago, {campoNoHipotecadoDe500.cayo(dante)})
+		assert.equals(50, dante.dinero())//Cobra la hipoteca y no la usa pq no le alcanza
+		assert.notThat(dante.tienePropiedad(campoDeDante))
+		assert.notThat(dante.tienePropiedad(campoNoHipotecadoDe500))
+		assert.that(bancoDelJuego1.tienePropiedad(campoNoHipotecadoDe500))
+		assert.that(bancoDelJuego1.tienePropiedad(campoDeDante))
+		assert.notThat(campoDeDante.estaLibre())
+	}
+	
+	test "Un Jugador cae en un campo hipotecado, no le alcanza para pagarlo, entonces hipoteca x propiedades hasta poder comprarlo, pero no le alcanza"{
+		dante.pagar(5000)
+		campoNoHipotecadoDe500.hipotecar()
+		dante.agregarPropiedad(campoDeDante)
+		assert.throwsExceptionWithType(noPuedeRealizarElPago, {campoNoHipotecadoDe500.cayo(dante)})
+		assert.equals(50, dante.dinero())//Cobra la hipoteca y no la usa pq no le alcanza
+		assert.notThat(dante.tienePropiedad(campoDeDante))
+		assert.notThat(dante.tienePropiedad(campoNoHipotecadoDe500))
+		assert.that(bancoDelJuego1.tienePropiedad(campoNoHipotecadoDe500))
+		assert.that(bancoDelJuego1.tienePropiedad(campoDeDante))
+		assert.notThat(campoDeDante.estaLibre())
+	}
+	
+	test "Un Jugador cae en una empresa, no le alcanza para pagarla, entonces hipoteca x propiedades hasta poder comprarla, pero no le alcanza"{
+		dante.pagar(5000)
+		dante.agregarPropiedad(campoDeDante)
+		assert.throwsExceptionWithType(noPuedeRealizarElPago, {empresaDelBanco.cayo(dante)})
+		assert.equals(50, dante.dinero())
+		assert.notThat(dante.tienePropiedad(empresaDelBanco))
+		assert.notThat(dante.tienePropiedad(campoDeDante))
+		assert.that(empresaDelBanco.estaLibre())
+		assert.that(bancoDelJuego1.tienePropiedad(empresaDelBanco))
+	}
+	
+	test "Un Jugador cae en una empresa hipotecada, no le alcanza para pagarla, entonces hipoteca x propiedades hasta poder comprarla, pero no le alcanza"{
+		dante.pagar(5000)
+		empresaDelBanco.hipotecar()
+		dante.agregarPropiedad(campoDeDante)
+		assert.throwsExceptionWithType(noPuedeRealizarElPago, {empresaDelBanco.cayo(dante)})
+		assert.equals(50, dante.dinero())
+		assert.notThat(dante.tienePropiedad(empresaDelBanco))
+		assert.notThat(dante.tienePropiedad(campoDeDante))
+		assert.notThat(empresaDelBanco.estaLibre())
+		assert.that(bancoDelJuego1.tienePropiedad(empresaDelBanco))
+	}
 }

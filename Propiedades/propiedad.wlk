@@ -1,9 +1,11 @@
 import casillero.*
+import estatus.*
 
 class Propiedad{//Solo interfaz
-    var property duenio 
-    var valorDeCompra
+    var   property duenio 
+    var   property valorDeCompra
     const property juego
+    var   property estatus       = libre
 
     method sosEmpresa()
 
@@ -17,7 +19,7 @@ class Propiedad{//Solo interfaz
         duenio.accionDeTitularidadSobrePropiedad(unJugador, self)
     }
 
-    method valorDeCompra () = valorDeCompra
+    method valorDeCompraActual () = estatus.valorDeCompra(self)
     
     method cambiarDuenio(nuevoDuenio){
     	duenio.eliminarPropiedad(self)
@@ -29,6 +31,20 @@ class Propiedad{//Solo interfaz
     method banco(){
     	return juego.banco()
     }
+    
+    method valorDeHipoteca(){//Lo que paga el banco al jugador
+    	return valorDeCompra/2
+    }
+    
+    method hipotecar(){
+    	self.estatus(hipotecada)
+    }
+    
+    method liberar(){
+    	self.estatus(libre)
+    }
+    
+    method estaLibre () = self.valorDeCompraActual() === valorDeCompra
 
 }
 
@@ -36,6 +52,7 @@ class PropiedadV2 inherits Casillero{//Deja de ser interfaz y las propiedades he
     var property duenio 
     var valorDeCompra
     const property juego
+    var property estatus = libre
 
     method sosEmpresa()
 
@@ -45,7 +62,7 @@ class PropiedadV2 inherits Casillero{//Deja de ser interfaz y las propiedades he
        duenio.accionDeTitularidadSobrePropiedad(unJugador, self)
     }
     
-    method valorDeCompra () = valorDeCompra
+    method valorDeCompraActual () = valorDeCompra
     
     override method esCasilleroEspecial() = false
     
@@ -59,6 +76,20 @@ class PropiedadV2 inherits Casillero{//Deja de ser interfaz y las propiedades he
     method banco(){
     	return juego.banco()
     }
+    
+    method valorDeHipoteca(){
+    	return valorDeCompra/2
+    }
+    
+      method hipotecar(){
+    	self.estatus(hipotecada)
+    }
+    
+    method liberar(){
+    	self.estatus(libre)
+    }
+    
+    method estaLibre () = self.valorDeCompraActual() === valorDeCompra
 }
 
 /* 
