@@ -4,6 +4,7 @@ class Casillero{
     }
 
     method cayo(unJugador){
+    	unJugador.cambiarPosicionActualPor(self)
     }
     
     method esCasilleroEspecial() = true

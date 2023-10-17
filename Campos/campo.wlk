@@ -1,5 +1,6 @@
 import propiedad.*
 import casillero.*
+import excepciones.*
 
 class Campo inherits Casillero{
     var property duenio 
@@ -87,4 +88,20 @@ class CampoV2 inherits Propiedad{
     override method rentaPara(_unJugador){
         return valorDeRenta * (2 ** cantidadDeEstancias)
     }
+    
+    /* Punto 2 Parte 2 */
+    /*method validarSiLaCompraElGarca(unJugador){
+    	if(not (provincia.esMonopolioDe(unJugador))) throw ningunOtroJuegadorTieneUnCampoEnLaProvincia
+    }
+    
+    method validarSiLaCompraElImperialista(unJugador){
+    	if(not(provincia.esMonopolioDe(self.banco()) or provincia.tieneAlgunCampo(unJugador))) throw elImperialistaNoCompraLaPropiedad
+    }
+    
+    /* Punto 2 Parte 2 */
+    method validarSiLaCompra(unJugador, unaEstrategia){
+    	unaEstrategia.validarSiElCampoCumpleLosRequisitos(unJugador, self.provincia(), self.banco())
+    }
+    
+    method provincia () = provincia
 }

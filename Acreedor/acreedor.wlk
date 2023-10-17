@@ -27,7 +27,13 @@ class Acreedor{
 	}
 
     method accionDeTitularidadSobrePropiedad(unJugador, unaPropiedad)//La usan el banco y los jugadores, pero no comparten implemetanción
-
+	
+	method esUnJugadorDistintoA(unJugador){
+		return self.esJugador() and self !== unJugador
+	}
+	
+	method esJugador()
+	
     /* Métodos que surgieron por tests */
     method tienePropiedad(unaPropiedad) = propiedades.contains(unaPropiedad) //and unaPropiedad.duenio() === self //Los dos o uno?
     

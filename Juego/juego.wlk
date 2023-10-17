@@ -18,14 +18,20 @@ class Juego {
 
 	/* Punto 9 */
 	method queJuegue(unJugador){
-		const valorDeDadosObtenido = unJugador.tirarDados()
-		self.hacerJugarTirando(unJugador, valorDeDadosObtenido)
+		unJugador.jugar()
 	}
 
-	method hacerJugarTirando(unJugador, unValor){
-		const casillerosARecorrer = tablero.casillerosDesdeHasta(unJugador.posicionActual(), unValor)
-		unJugador.moverseSobre(casillerosARecorrer)
+	method casillerosARecorrer(unJugador, unValor) = tablero.casillerosDesdeHasta(unJugador.posicionActual(), unValor)
+		
+	/* Punto 2 Parte 2 */
+	method algunOtroJugadorTieneAlgunaEmpresa(unJugador){
+		return jugadores.any{jugador => jugador.esDistintoAYTieneAlgunaEmpresa(unJugador)}
 	}
+	
+	method ningunJugadorTieneEmpresa(){
+		return jugadores.all{jugador => not (jugador.tieneAlgunaEmpresa())}
+	}
+	
 	
 	/* Metodos Para Inicializar */
 	
@@ -43,6 +49,7 @@ class Juego {
 		self.agregarJugador(mockJugador.crearJugador())
 	}
 	
+	/* Metodos extras */
 	method salida(){
 		return tablero.salida()
 	}
@@ -50,8 +57,10 @@ class Juego {
 	method agregarJugador(unJugador){//Agrega un Jugador ya creado
 		jugadores.add(unJugador)
 	}
-
+	
+	method prision() = tablero.prision()
 }
+
 
 /*
 	method queJuegue(unJugador) {

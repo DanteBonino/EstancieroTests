@@ -1,9 +1,11 @@
 import casillerosEspeciales.*
+import casillero.*
 
 class Tablero {
-    const property salida = new Salida()
+    const property salida 		  = new Salida()
     const property premioGanadero = new PremioGanadero ()
-    const property casilleros = [salida, premioGanadero]//Debería crearse con todas las propiedades + casilleros especiales
+    const property prision		  = new Casillero()
+    const property casilleros     = [salida, premioGanadero, prision]//Debería crearse con todas las propiedades + casilleros especiales
     const property juego
     
     method casillerosDesdeHasta(unCasillero, unNumero) {
@@ -21,6 +23,7 @@ class Tablero {
     
     method casillerosEspeciales()  = casilleros.filter{unCasillero => unCasillero.esCasilleroEspecial()}
     
+    /* Métodos de inicialización */
     method setearTablero(unasPropiedades){//Recibe mockPropiedades, crea las propiedades y las agrega al tablero
     	unasPropiedades.forEach{propiedad => self.crearYAgregarPropiedad(propiedad)}
     }
@@ -33,6 +36,8 @@ class Tablero {
     method agregarPropiedad(unaPropiedad){//Agrega una propiedad ya creada
     	casilleros.add(unaPropiedad)
     }
+    
+    method banco () = juego.banco()
     
 }
 

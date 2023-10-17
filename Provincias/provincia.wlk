@@ -24,6 +24,19 @@ class Provincia{
         const cantidadEstanciasDelCampo = unCampo.cantidadDeEstancias()
         return campos.all{campo => campo.noTieneMasEstanciasQue(cantidadEstanciasDelCampo)}
     }
+    
+    /* Punto 2 Parte 2 */
+    method esMonopolioDe(unJugador){
+    	return campos.all{unCampo => unCampo.esDe(unJugador)}
+    }
+    
+    method tieneAlgunCampo(unJugador){
+    	return self.dueniosDeCampos().contains(unJugador)
+    }
+    
+    method algunOtroJugadorTieneAlgunCampo(unJugador){
+    	return self.dueniosDeCampos().any{duenio => duenio.esUnJugadorDistintoA(unJugador)}
+    }
 
     /* Metodos que surgieron por tests */
     method agregarCampo(unCampo){

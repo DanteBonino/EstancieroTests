@@ -17,12 +17,12 @@ const salidaDelJuego1  		  = tableroDelJuego1.salida()
 const premioGanaderoDelJuego1 = tableroDelJuego1.premioGanadero()
 const buenosAires			  = new Provincia()
 const formosa				  = new Provincia()
-const campoDeDante			  = new CampoV2(provincia = buenosAires, duenio = dante, valorDeRenta = 500, costoDeConstruccion = 500, valorDeCompra = 100)
-const campoDeFede			  = new CampoV2(provincia = formosa, duenio = fede, valorDeRenta = 500, costoDeConstruccion = 500, valorDeCompra = 100)
-const campoDelBanco			  = new CampoV2(provincia = buenosAires, duenio = bancoDelJuego1, valorDeRenta = 500, costoDeConstruccion = 200, valorDeCompra = 200)
-const empresaDeDante          = new EmpresaV2(duenio = dante, valorDeCompra = 100)
-const empresaDeFede           = new EmpresaV2(duenio = fede, valorDeCompra = 200)
-const empresaDelBanco         = new EmpresaV2(duenio = bancoDelJuego1, valorDeCompra = 300)
+const campoDeDante			  = new CampoV2(provincia = buenosAires, duenio = dante, valorDeRenta = 500, costoDeConstruccion = 500, valorDeCompra = 100, juego = juego1)
+const campoDeFede			  = new CampoV2(provincia = formosa, duenio = fede, valorDeRenta = 500, costoDeConstruccion = 500, valorDeCompra = 100, juego = juego1)
+const campoDelBanco			  = new CampoV2(provincia = buenosAires, duenio = bancoDelJuego1, valorDeRenta = 500, costoDeConstruccion = 200, valorDeCompra = 200, juego = juego1)
+const empresaDeDante          = new EmpresaV2(duenio = dante, valorDeCompra = 100, juego = juego1)
+const empresaDeFede           = new EmpresaV2(duenio = fede, valorDeCompra = 200, juego = juego1)
+const empresaDelBanco         = new EmpresaV2(duenio = bancoDelJuego1, valorDeCompra = 300, juego = juego1)
 
 const arrayDePrueba = #{campoDeDante}
 
@@ -341,13 +341,13 @@ describe "Punto 9"{
 	}
 	
 	test "Dante saca 2 en los dados y debería caer en salida, el tablero sólo tiene salida y premioGanadero"{
-		juego1.hacerJugarTirando(dante, 2)
+		dante.jugarHabiendoTirado(2)
 		assert.that(dante.esSuPosicionActual(salidaDelJuego1))
 		assert.equals(7000, dante.dinero()) //Paso por salida y cayo en salida
 	}
 	
 	test "Dante saca 3 en los dados y debería caer en premioGanadero, el tablero sólo tiene salida y premioGanadero"{
-		juego1.hacerJugarTirando(dante, 3)
+		dante.jugarHabiendoTirado(3)
 		assert.that(dante.esSuPosicionActual(premioGanaderoDelJuego1)) // Esto es falso por cómo está hecho el método para calcular los casilleros por los que se tiene que mover
 		assert.equals(9500, dante.dinero()) //Paso por salida y cayó en premio ganadero
 	}

@@ -1,0 +1,196 @@
+import juego.*
+import tablero.*
+import jugador.*
+import propiedad.*
+import campo.*
+import empresa.*
+import casillerosEspeciales.*
+import provincia.*
+import excepciones.*
+import estrategiasDeCompra.*
+
+class TiradorDeDobles inherits Jugador{
+	override method tirarUnDado(){
+		return 2
+	}
+}
+
+class TiradorDeNoDobles inherits Jugador{
+	override method tirarDadosUnaVez(){
+		return 7
+	}
+}
+
+const juego1 		   		  = new Juego()
+const tableroDelJuego1 		  = juego1.tablero()
+const dante            		  = new Jugador(juego = juego1, dinero = 2000)
+const fede             		  = new Jugador(juego = juego1, dinero = 2000)
+const bancoDelJuego1   		  = juego1.banco()
+const salidaDelJuego1  		  = tableroDelJuego1.salida()
+const premioGanaderoDelJuego1 = tableroDelJuego1.premioGanadero()
+const prisionDelJuego1		  = tableroDelJuego1.prision()
+const buenosAires			  = new Provincia()
+const formosa				  = new Provincia()
+const campoDeDante			  = new CampoV2(provincia = buenosAires, duenio = dante, valorDeRenta = 500, costoDeConstruccion = 500, valorDeCompra = 100, juego = juego1)
+const campoDeFede			  = new CampoV2(provincia = formosa, duenio = fede, valorDeRenta = 500, costoDeConstruccion = 500, valorDeCompra = 100, juego = juego1)
+const campoDelBanco			  = new CampoV2(provincia = buenosAires, duenio = bancoDelJuego1, valorDeRenta = 500, costoDeConstruccion = 200, valorDeCompra = 200, juego = juego1)
+const empresaDeDante          = new EmpresaV2(duenio = dante, valorDeCompra = 100, juego = juego1)
+const empresaDeFede           = new EmpresaV2(duenio = fede, valorDeCompra = 200, juego = juego1)
+const empresaDelBanco         = new EmpresaV2(duenio = bancoDelJuego1, valorDeCompra = 300, juego = juego1)
+const tiradorDeDobles		  = new TiradorDeDobles(juego = juego1)
+const tiradorDe7			  = new TiradorDeNoDobles(juego = juego1)
+
+describe "Punto 1" {
+	
+	method initialize(){
+		
+	}
+	
+	test "dante cae en la prision y sólo cambia su posicion" {
+		prisionDelJuego1.cayo(dante)
+		assert.that(dante.esSuPosicionActual(prisionDelJuego1))
+		assert.equals(2000, dante.dinero())
+	}
+	
+	test "dante pasa por la prision y no pasa nada"{
+		prisionDelJuego1.paso(dante)
+		assert.notThat(dante.esSuPosicionActual(prisionDelJuego1))
+		assert.equals(2000, dante.dinero())
+	}
+	
+	test "dante va preso"{
+		dante.irPreso()
+		assert.equals(3, dante.turnosRestantesEnPrision())
+		assert.that(dante.esSuPosicionActual(prisionDelJuego1))
+	}
+	
+	test "Un jugador termina preso si, jugando, saca dos dobles seguidos"{
+		tiradorDeDobles.jugar()
+		assert.equals(3, tiradorDeDobles.turnosRestantesEnPrision())
+		assert.that(tiradorDeDobles.esSuPosicionActual(prisionDelJuego1))
+		
+	}
+	
+	test "Un jugador libre, si no saca dobles, juega normalmente"{
+		assert.doesNotThrowException({tiradorDe7.jugar()})
+		assert.that(tiradorDe7.esSuPosicionActual(salidaDelJuego1))
+	}
+	test "Un jugador está preso, no saca dobles y todavía no pasaron 3 turnos, entonces no deja de estar preso"{
+		tiradorDe7.irPreso()
+		tiradorDe7.jugar()
+		assert.equals(2, tiradorDe7.turnosRestantesEnPrision())
+		assert.that(tiradorDe7.esSuPosicionActual(prisionDelJuego1))
+	}
+	
+	test "Un Jugador está preso y saca dobles, entonces se mueve"{
+		
+	}
+	
+	test "Un Jugador está preso, se juegan 3 turnos y pasa a dejar de estarlo"{
+		
+	}
+}
+
+describe "Punto 2"{
+	method initialize(){
+		dante.cobrar(3000)
+		buenosAires.agregarCampo(campoDelBanco)
+		bancoDelJuego1.agregarPropiedad(campoDelBanco)
+		bancoDelJuego1.agregarPropiedad(empresaDelBanco)
+		juego1.agregarJugador(fede)
+		juego1.agregarJugador(dante)
+	}
+	
+	test "Un jugador con la estrategia estandar cae en un campo del banco y lo compra"{
+		campoDelBanco.cayo(dante)
+		assert.equals(4800, dante.dinero())
+		assert.that(dante.tienePropiedad(campoDelBanco))
+		assert.notThat(bancoDelJuego1.tienePropiedad(campoDelBanco))
+		
+	}
+	
+	test "Un jugador con la estrategia estandar cae en una empresa del banco y la compra"{
+		empresaDelBanco.cayo(dante)
+		assert.equals(4700, dante.dinero())
+		assert.that(dante.tienePropiedad(empresaDelBanco))
+		assert.notThat(bancoDelJuego1.tienePropiedad(empresaDelBanco))
+	}
+	
+	test "Un jugador con la estrategia garca cae en un campo del banco y lo compra"{
+		dante.estrategiaDeCompra(garca)
+		campoDeFede.asignarProvincia(buenosAires)
+		buenosAires.agregarCampo(campoDeFede)
+		campoDelBanco.cayo(dante)
+		assert.equals(4800, dante.dinero())
+		assert.that(dante.tienePropiedad(campoDelBanco))
+		assert.notThat(bancoDelJuego1.tienePropiedad(campoDelBanco))
+	}
+	
+	test "Un jugador con la estrategia garca cae en un campo del banco y no lo compra pq ningún otro jugador tiene campos en la provincia del mismo"{
+		dante.estrategiaDeCompra(garca)
+		assert.throwsExceptionWithMessage("Ningun otro jugador tiene campos en la provincia del mismo", {campoDelBanco.cayo(dante)})
+		assert.notThat(dante.tienePropiedad(campoDelBanco))
+		assert.equals(5000, dante.dinero())
+		assert.that(bancoDelJuego1.tienePropiedad(campoDelBanco))
+	}
+	
+	test "Un jugador con la estrategia garca cae en una empresa del banco y no la compra pq ningún otro jugador tiene alguna empresa"{
+		dante.estrategiaDeCompra(garca)
+		bancoDelJuego1.agregarPropiedad(empresaDeDante)
+		bancoDelJuego1.agregarPropiedad(empresaDeFede)
+		assert.throwsExceptionWithMessage("No hay ningún otro jugador que sea dueño de alguna empresa, por ende no compra la empresa", {empresaDelBanco.cayo(dante)})
+		assert.notThat(dante.tienePropiedad(empresaDelBanco))
+		assert.equals(5000, dante.dinero())
+		assert.that(bancoDelJuego1.tienePropiedad(empresaDelBanco))
+	}
+	
+	test "Un jugador con la estrategia imperialista cae en un campo del banco y lo compra pq  ya tiene otro campo en la provincia"{
+		dante.estrategiaDeCompra(imperialista)
+		dante.agregarPropiedad(campoDeDante)
+		buenosAires.agregarCampo(campoDeDante)
+		campoDelBanco.cayo(dante)
+		assert.equals(4800, dante.dinero())
+		assert.that(dante.tienePropiedad(campoDelBanco))
+		assert.notThat(bancoDelJuego1.tienePropiedad(campoDelBanco))
+	}
+	
+	test "Un jugador con la estrategia imperialista cae en un campo del banco y lo compra pq la provincia es un monopolio del banco"{
+		dante.estrategiaDeCompra(imperialista)
+		bancoDelJuego1.agregarPropiedad(campoDeDante)
+		buenosAires.agregarCampo(campoDeDante)
+		campoDelBanco.cayo(dante)
+		assert.equals(4800, dante.dinero())
+		assert.that(dante.tienePropiedad(campoDelBanco))
+		assert.notThat(bancoDelJuego1.tienePropiedad(campoDelBanco))
+	}
+	
+	test "Un jugador con la estrategia imperialista cae en una empresa del banco y la compra"{
+		dante.estrategiaDeCompra(imperialista)
+		bancoDelJuego1.agregarPropiedad(empresaDeDante)
+		bancoDelJuego1.agregarPropiedad(empresaDeFede)
+		empresaDelBanco.cayo(dante)
+		assert.equals(4700, dante.dinero())
+		assert.that(dante.tienePropiedad(empresaDelBanco))
+		assert.notThat(bancoDelJuego1.tienePropiedad(empresaDelBanco))
+	}
+	
+	test "Un jugador con la estrategia imperialista cae en un campo del banco y no lo compra pq no se cumplen las condiciones adecuadas"{
+		dante.estrategiaDeCompra(imperialista)
+		campoDeFede.asignarProvincia(buenosAires)
+		buenosAires.agregarCampo(campoDeFede)
+		assert.throwsExceptionWithMessage("La propiedad no cumple las condiciones adecuadas para ser comprada por el jugador", {campoDelBanco.cayo(dante)})
+		assert.notThat(dante.tienePropiedad(campoDelBanco))
+		assert.equals(5000, dante.dinero())
+		assert.that(bancoDelJuego1.tienePropiedad(campoDelBanco))
+	}
+	
+	test "Un jugador con la estrategia imperialista cae en una empresa del banco y no la compra pq las empresas no son un monopolio del banco"{
+		dante.estrategiaDeCompra(imperialista)
+		fede.agregarPropiedad(empresaDeFede)
+		assert.throwsExceptionWithMessage("Las empresas no son todas del banco, por ende no compra la empresa", {empresaDelBanco.cayo(dante)})
+		assert.notThat(dante.tienePropiedad(empresaDelBanco))
+		assert.equals(5000, dante.dinero())
+		assert.that(bancoDelJuego1.tienePropiedad(empresaDelBanco))
+	}
+	
+}

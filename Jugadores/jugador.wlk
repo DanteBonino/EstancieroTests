@@ -1,10 +1,15 @@
 import excepciones.*
 import acreedor.*
+import estado.*
+import estrategiasDeCompra.*
 
 class Jugador inherits Acreedor{
 	const juego
-	var posicionActual = juego.salida()
-	const banco = juego.banco()
+	var posicionActual     = juego.salida()
+	const banco            = juego.banco()
+	var property estado    = libre
+	const prision	       = juego.prision()
+	var estrategiaDeCompra = estandar
 	
 
 	/* Punto 1 b */ 
@@ -46,7 +51,6 @@ class Jugador inherits Acreedor{
 		const ultimoCasillero = unosCasilleros.last()
 		self.pasarPor(unosCasilleros)
 		self.cayoEn(ultimoCasillero)
-		posicionActual = ultimoCasillero
 	}
 
 	method pasarPor(unosCasilleros){
@@ -57,14 +61,73 @@ class Jugador inherits Acreedor{
 		unCasillero.cayo(self)
 	}
 	
+	method cambiarPosicionActualPor(unCasillero){
+		posicionActual = unCasillero
+	}
+	
 	/* Punto 9 */
+	method jugar(){
+		try{
+			const valorDeDadosObtenidos = estado.jugar(self)
+			self.jugarHabiendoTirado(valorDeDadosObtenidos)
+		}
+		catch fuePreso : VaPreso{
+			self.irPreso()
+		}
+		/*catch quedoLibre : EsLibre{
+			self.quedarEnLibertad()
+			self.jugar()
+		}*/
+		
+	}
+	
 	method posicionActual() = posicionActual
-
+	
+	method jugarHabiendoTirado(unValorDeDados){
+		self.moverseSobre(juego.casillerosARecorrer(self, unValorDeDados))
+	}
+	
+	/* Punto 1 Parte 2 */
+	method tirarDadosUnaVez(){
+		const dado1 = self.tirarUnDado()
+  		const dado2 = self.tirarUnDado()
+  		if (dado1 == dado2)	throw new SacoDoblesException(valorDelTiro = dado1 + dado2)
+		return dado1 + dado2
+	}
+	
+	method irPreso(){
+		self.cayoEn(prision)
+		self.estado(new Preso())
+	}
+	
+	method quedarEnLibertad(){
+		self.estado(libre)
+	}
+	
+	/* Punto 2 Parte 2 */
+	method comprarV2(unaPropiedad){
+		estrategiaDeCompra.validarCompraV2(unaPropiedad, self)
+		self.comprar(unaPropiedad)
+	}
+	
+	method tieneAlgunaEmpresa(){
+		return self.cantidadEmpresasPropias() > 0
+	}
+	
+	method esDistintoAYTieneAlgunaEmpresa(otroJugador){
+		return self.tieneAlgunaEmpresa() and self !== otroJugador
+	}
+	
+	override method esJugador () = true
+	
 	/* Metodos surgidos por tests */
 
-	method esSuPosicionActual(unCasillero) = posicionActual === unCasillero
+	method esSuPosicionActual(unCasillero)   = posicionActual === unCasillero
+	method turnosRestantesEnPrision()	     = estado.turnosEnPrisionRestantes()
+	method estrategiaDeCompra(unaEstrategia){
+		estrategiaDeCompra = unaEstrategia
+	}
 }
-
 
 /*
     var property posicionActual = salida
