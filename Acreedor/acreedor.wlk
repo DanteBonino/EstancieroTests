@@ -5,7 +5,7 @@ class Acreedor{
     var dinero 		           = 0
 
     method pagarA(unAcreedor, unMonto){//Un Acreedor puede ser un jugador o un banco, por ende ambos deben poder validar si pueden pagar algo, pagar algo y cobrar algo
-		//self.validarPosibilidadDePagar(unMonto) Lo saco de acá? o Lo dejo?
+		self.validarPosibilidadDePagar(unMonto)
 		self.pagar(unMonto)
 		unAcreedor.cobrar(unMonto)
 	}
@@ -23,7 +23,7 @@ class Acreedor{
     }
 
     method validarPosibilidadDePagar(unMonto){
-		if(unMonto > dinero) throw noPuedeRealizarElPago
+		if(unMonto > dinero) throw new NoPuedeRealizarElPago()
 	}
 
     method accionDeTitularidadSobrePropiedad(unJugador, unaPropiedad)//La usan el banco y los jugadores, pero no comparten implemetanción

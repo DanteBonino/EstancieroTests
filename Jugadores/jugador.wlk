@@ -11,6 +11,19 @@ class Jugador inherits Acreedor{
 	const prision	       = juego.prision()
 	var estrategiaDeCompra = estandar
 	
+import excepciones.*
+import acreedor.*
+import estado.*
+import estrategiasDeCompra.*
+
+class Jugador inherits Acreedor{
+	const juego
+	var posicionActual     = juego.salida()
+	const banco            = juego.banco()
+	var property estado    = libre
+	const prision	       = juego.prision()
+	var estrategiaDeCompra = estandar
+	
 
 	/* Punto 1 b */ 
 	method pagarEstancia(costoDeConstruccionEstancia){
@@ -122,28 +135,29 @@ class Jugador inherits Acreedor{
 	
 	/* Punto 3 Parte 2 */
 	override method pagarA(unAcreedor, unMonto){
-		self.validarPosibilidadDePagar(unMonto)
-		super(unAcreedor, unMonto)
+		try {
+      		super(unAcreedor, unMonto)
+    	}
+    	catch exception : NoPuedeRealizarElPago {
+      		self.hipotecarUnaPropiedad()
+      		self.pagarA(unAcreedor, unMonto)
+    	}
 	}
 	
-	override method validarPosibilidadDePagar(unMonto){
-		if(unMonto > self.dinero()) self.hipotecarPropiedadesHastaPoderPagar(unMonto)
+	method hipotecarUnaPropiedad(){
+		try{
+			const unaPropiedad = self.unaPropiedad()
+			self.hipotecar(unaPropiedad)
+		}
+		catch exception : Exception {
+			throw new Perdio()
+		}
 	}
 	
-	method hipotecarPropiedadesHastaPoderPagar(unMonto){
-		self.hipotecarPropiedad()
-		self.validarPosibilidadDePagar(unMonto)
-	}
-	
-	method hipotecarPropiedad(){
-		self.validarPosibilidadDeHipotecar()
-		const unaPropiedad = self.unaPropiedad()
+	method hipotecar(unaPropiedad){
 		banco.pagarHipoteca(self, unaPropiedad)
 	}
 	
-	method validarPosibilidadDeHipotecar(){
-		if (! self.tieneAlgunaPropiedad()) throw noPuedeRealizarElPago
-	}
 	
 	method tieneAlgunaPropiedad(){
 		return self.propiedades().size()>0 //Esto rompe el encapsulamiento?
@@ -168,7 +182,6 @@ class Jugador inherits Acreedor{
 	}
 }
 	
-
 /*
     var property posicionActual = salida
 	var turnosRestantesPreso    = 0

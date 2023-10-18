@@ -223,12 +223,12 @@ describe "Punto 3"{
 	}
 	
 	test "dante le paga al banco una suma que lo supera económicamente y tira error, no tiene propiedades para hipotecar"{
-		assert.throwsExceptionWithType(noPuedeRealizarElPago,{dante.pagarA(bancoDelJuego1, 50000)})
+		assert.throwsExceptionWithType(new Perdio(),{dante.pagarA(bancoDelJuego1, 50000)})
 		assert.equals(5000, bancoDelJuego1.dinero())
 	}
 	
 	test "dante le paga a fede una suma que lo supera económicamente y tira error, no tiene propiedades para hipotecar"{
-		assert.throwsExceptionWithType(noPuedeRealizarElPago,{dante.pagarA(fede, 50000)})
+		assert.throwsExceptionWithType(new Perdio(),{dante.pagarA(fede, 50000)})
 		assert.equals(2000, fede.dinero())
 	}
 	
@@ -261,7 +261,7 @@ describe "Punto 3"{
     }
 
     test "el banco le paga a dante una suma que lo supera económicamente y tira error"{
-		assert.throwsExceptionWithType(noPuedeRealizarElPago,{bancoDelJuego1.pagarA(dante, 50000)})
+		assert.throwsExceptionWithType(new NoPuedeRealizarElPago(),{bancoDelJuego1.pagarA(dante, 50000)})
 		assert.equals(5000, dante.dinero())
         assert.equals(5000, bancoDelJuego1.dinero())
 	}
@@ -283,7 +283,7 @@ describe "Punto 3"{
 	}
 	
 	test "Un Jugador intenta comprar una propiedad que excede su nivel de vida, y no tiene propiedades para hipotecar, entonce no la compra"{
-		assert.throwsExceptionWithMessage("El acreedor no puede realizar el pago correspondiente debido a que su saldo es insuficiente", {empresaDelBancoCara.cayo(dante)})
+		assert.throwsExceptionWithType(new Perdio(), {empresaDelBancoCara.cayo(dante)})
 		assert.that(dante.dinero() < empresaDelBancoCara.valorDeCompra())
 		assert.that(bancoDelJuego1.tienePropiedad(empresaDelBancoCara))
 		assert.notThat(dante.tienePropiedad(empresaDelBancoCara))
@@ -382,7 +382,7 @@ describe "Punto 3"{
 	test "Un Jugador cae en un campo, no le alcanza para pagarlo, entonces hipoteca x propiedades hasta poder comprarlo, pero no le alcanza"{
 		dante.pagar(5000)
 		dante.agregarPropiedad(campoDeDante)
-		assert.throwsExceptionWithType(noPuedeRealizarElPago, {campoNoHipotecadoDe500.cayo(dante)})
+		assert.throwsExceptionWithType(new Perdio(), {campoNoHipotecadoDe500.cayo(dante)})
 		assert.equals(50, dante.dinero())//Cobra la hipoteca y no la usa pq no le alcanza
 		assert.notThat(dante.tienePropiedad(campoDeDante))
 		assert.notThat(dante.tienePropiedad(campoNoHipotecadoDe500))
@@ -395,7 +395,7 @@ describe "Punto 3"{
 		dante.pagar(5000)
 		campoNoHipotecadoDe500.hipotecar()
 		dante.agregarPropiedad(campoDeDante)
-		assert.throwsExceptionWithType(noPuedeRealizarElPago, {campoNoHipotecadoDe500.cayo(dante)})
+		assert.throwsExceptionWithType(new Perdio(), {campoNoHipotecadoDe500.cayo(dante)})
 		assert.equals(50, dante.dinero())//Cobra la hipoteca y no la usa pq no le alcanza
 		assert.notThat(dante.tienePropiedad(campoDeDante))
 		assert.notThat(dante.tienePropiedad(campoNoHipotecadoDe500))
@@ -407,7 +407,7 @@ describe "Punto 3"{
 	test "Un Jugador cae en una empresa, no le alcanza para pagarla, entonces hipoteca x propiedades hasta poder comprarla, pero no le alcanza"{
 		dante.pagar(5000)
 		dante.agregarPropiedad(campoDeDante)
-		assert.throwsExceptionWithType(noPuedeRealizarElPago, {empresaDelBanco.cayo(dante)})
+		assert.throwsExceptionWithType(new Perdio(), {empresaDelBanco.cayo(dante)})
 		assert.equals(50, dante.dinero())
 		assert.notThat(dante.tienePropiedad(empresaDelBanco))
 		assert.notThat(dante.tienePropiedad(campoDeDante))
@@ -419,7 +419,7 @@ describe "Punto 3"{
 		dante.pagar(5000)
 		empresaDelBanco.hipotecar()
 		dante.agregarPropiedad(campoDeDante)
-		assert.throwsExceptionWithType(noPuedeRealizarElPago, {empresaDelBanco.cayo(dante)})
+		assert.throwsExceptionWithType(new Perdio(), {empresaDelBanco.cayo(dante)})
 		assert.equals(50, dante.dinero())
 		assert.notThat(dante.tienePropiedad(empresaDelBanco))
 		assert.notThat(dante.tienePropiedad(campoDeDante))

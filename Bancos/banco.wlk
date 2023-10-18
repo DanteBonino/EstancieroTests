@@ -17,8 +17,8 @@ class Banco inherits Acreedor{
     	self.agregarPropiedad(unaPropiedad)
     }
     
-    override method pagarA(unAcreedor, unMonto){//Así?
+    /*override method pagarA(unAcreedor, unMonto){//Así?
     	self.validarPosibilidadDePagar(unMonto)
     	super(unAcreedor, unMonto)
-    }
+    }*/
 }

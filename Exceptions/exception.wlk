@@ -4,6 +4,10 @@ const noEsConstruccionPareja   = new Exception (message = "No todos los campos t
 
 const noPuedeRealizarElPago    = new Exception (message = "El acreedor no puede realizar el pago correspondiente debido a que su saldo es insuficiente")
 
+class NoPuedeRealizarElPago inherits wollok.lang.Exception{
+	override method message () = "El acreedor no puede realizar el pago correspondiente debido a que su saldo es insuficiente"
+}
+
 class SacoDoblesException inherits wollok.lang.Exception {
 	const property valorDelTiro
 }
@@ -21,3 +25,12 @@ const ningunOtroJuegadorTieneUnCampoEnLaProvincia = new Exception (message = "Ni
 const elImperialistaNoCompraLaPropiedad           = new Exception (message = "La propiedad no cumple las condiciones adecuadas para ser comprada por el jugador")
 const ningunOtroJugadorTieneUnaEmpresa            = new Exception (message = "No hay ningún otro jugador que sea dueño de alguna empresa, por ende no compra la empresa")
 const lasEmpresasNoSonUnMonopolioDelBanco         = new Exception (message = "Las empresas no son todas del banco, por ende no compra la empresa")
+
+/* Punto 3 Parte 2 */
+class NoPuedeHipotecarMasPropiedades inherits wollok.lang.Exception{
+	override method message () = "El jugador no puede hipotecar mas propiedades para intentar pagar el monto requerido"
+}
+
+class Perdio inherits wollok.lang.Exception{
+	override method message () = "El jugador perdió"
+}
