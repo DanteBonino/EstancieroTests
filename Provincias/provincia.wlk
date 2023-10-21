@@ -1,7 +1,7 @@
 import excepciones.*
 
 class Provincia{
-    const campos = new Set()
+    const property campos = new Set()
 
     /* Punto 1 a*/
     method dueniosDeCampos(){
@@ -36,6 +36,10 @@ class Provincia{
     
     method algunOtroJugadorTieneAlgunCampo(unJugador){
     	return self.dueniosDeCampos().any{duenio => duenio.esUnJugadorDistintoA(unJugador)}
+    }
+    
+    method camposQueNoSean(unaPropiedad){
+    	return campos.filter{unCampo => unCampo !== unaPropiedad}
     }
 
     /* Metodos que surgieron por tests */

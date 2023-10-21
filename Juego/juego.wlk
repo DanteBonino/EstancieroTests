@@ -32,6 +32,9 @@ class Juego {
 		return jugadores.all{jugador => not (jugador.tieneAlgunaEmpresa())}
 	}
 	
+	method empresasQueNoSean(unaEmpresa){
+		return tablero.empresasQueNoSon(unaEmpresa)
+	}
 	
 	/* Metodos Para Inicializar */
 	
@@ -60,30 +63,3 @@ class Juego {
 	
 	method prision() = tablero.prision()
 }
-
-
-/*
-	method queJuegue(unJugador) {
-		try{
-			const numeroDeCasilleros = unJugador.tirarDados()
-			self.hacerJugarTirando(unJugador, numeroDeCasilleros)
-		}
-		catch fuePresoException : VaPresoException{
-			unJugador.irPreso()
-		}
-	}
-	
-	
-	method hacerJugarTirando(unJugador, unValorDeDados){//Esto se hizo para testear qué pasa con un número de dados particular
-		const casillerosQueRecorre = tablero.casillerosDesdeHasta(unJugador.posicionActual(), unValorDeDados)//Devuelve una lista donde el último casillero es al que tiene que ir
-		unJugador.moverseSobre(casillerosQueRecorre)
-	}
-	
-	
-	
-	method agregarJugador(unJugador){
-		jugadores.add(unJugador)
-	}
-
-
- */

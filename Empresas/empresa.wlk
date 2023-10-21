@@ -20,6 +20,7 @@ class Empresa inherits Casillero{
 }
 
 class EmpresaV2 inherits Propiedad{
+	/* Punto 2a */
 	override method sosEmpresa() = true
 	
 	/* Punto 4 */
@@ -28,6 +29,17 @@ class EmpresaV2 inherits Propiedad{
     }
     
     /* Punto 2 Parte 2 */
+    
+    override method otrasPropiedadesDelRubro(){
+    	return juego.empresasQueNoSean(self)
+    }
+    
+    /* Esto es para las estrategias en las que no se puede usar polimórficamente tanto a las propiedades */
+    method esComprablePor(unJugador, unaEstrategia){
+    	return unaEstrategia.esComprableLaEmpresa(unJugador,self)
+    }
+    
+    /* 
     method validarSiLaCompraElGarca(unJugador){
     	if(!juego.algunOtroJugadorTieneAlgunaEmpresa(unJugador)) throw ningunOtroJugadorTieneUnaEmpresa
     }
@@ -36,9 +48,9 @@ class EmpresaV2 inherits Propiedad{
     	if(! juego.ningunJugadorTieneEmpresa()) throw lasEmpresasNoSonUnMonopolioDelBanco
     }
     
-    /* Punto 2 Parte 2 Versio 2 */
+    /* Punto 2 Parte 2 Versio 2 
     method validarSiLaCompra(unJugador, unEstilo){
     	unEstilo.validarSiLaEmpresaCumpleLosRequisitos(unJugador, self.juego())
-    }
+    }*/
     
 }

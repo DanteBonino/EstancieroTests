@@ -4,23 +4,10 @@ import estado.*
 import estrategiasDeCompra.*
 
 class Jugador inherits Acreedor{
-	const juego
-	var posicionActual     = juego.salida()
-	const banco            = juego.banco()
-	var property estado    = libre
-	const prision	       = juego.prision()
-	var estrategiaDeCompra = estandar
-	
-import excepciones.*
-import acreedor.*
-import estado.*
-import estrategiasDeCompra.*
-
-class Jugador inherits Acreedor{
-	const juego
-	var posicionActual     = juego.salida()
-	const banco            = juego.banco()
-	var property estado    = libre
+	const property juego   //Conocer el juego es necesario para conocer al banco y para saber sobre qué casilleros debe moverse (Punto 9)
+	var posicionActual     = juego.salida()//Surge en el Punto 8
+	const banco            = juego.banco()//Necesario en el Punto 1b
+	var property estado    = libre//Surge en el Punto 1 Parte 2
 	const prision	       = juego.prision()
 	var estrategiaDeCompra = estandar
 	
@@ -59,7 +46,7 @@ class Jugador inherits Acreedor{
 		self.agregarPropiedad(unaPropiedad)
 	}*/
 
-	/* Punto 8 */
+	/* Punto 8 (único de Jugador, no es de Acreedor)*/
 	method moverseSobre(unosCasilleros){
 		const ultimoCasillero = unosCasilleros.last()
 		self.pasarPor(unosCasilleros)
@@ -80,19 +67,17 @@ class Jugador inherits Acreedor{
 	
 	/* Punto 9 */
 	method jugar(){
-		try{
-			const valorDeDadosObtenidos = estado.jugar(self)
-			self.jugarHabiendoTirado(valorDeDadosObtenidos)
-		}
-		catch fuePreso : VaPreso{
-			self.irPreso()
-		}
-		/*catch quedoLibre : EsLibre{
-			self.quedarEnLibertad()
-			self.jugar()
-		}*/
-		
+		estado.jugar(self)//Recién surge en el Punto 1 Parte 2
 	}
+	
+	/* Version antigua de Jugar (así surgió para el Punto 9)
+	 *  
+	 	method jugar(){
+			const valorDeDadosObtenido = self.tirarDados()
+			self.jugarHabiendoTirado(valorDeDadosObtenido)
+		}
+	 */
+	 
 	
 	method posicionActual() = posicionActual
 	
@@ -119,8 +104,7 @@ class Jugador inherits Acreedor{
 	
 	/* Punto 2 Parte 2 */
 	method comprarV2(unaPropiedad){
-		estrategiaDeCompra.validarCompraV2(unaPropiedad, self)
-		self.comprar(unaPropiedad)
+		if(estrategiaDeCompra.esComprable(unaPropiedad,self)) self.comprar(unaPropiedad)
 	}
 	
 	method tieneAlgunaEmpresa(){
@@ -158,7 +142,7 @@ class Jugador inherits Acreedor{
 		banco.pagarHipoteca(self, unaPropiedad)
 	}
 	
-	
+	/* No se usa este método */
 	method tieneAlgunaPropiedad(){
 		return self.propiedades().size()>0 //Esto rompe el encapsulamiento?
 	}
@@ -180,70 +164,6 @@ class Jugador inherits Acreedor{
 	method estrategiaDeCompra(unaEstrategia){
 		estrategiaDeCompra = unaEstrategia
 	}
+	method estrategiaDeCompra() = estrategiaDeCompra
 }
 	
-/*
-    var property posicionActual = salida
-	var turnosRestantesPreso    = 0
-    method tirarDados() {
-		try {
-    		return self.tirarDadosUnaVez()
-  		}
-  		catch primerTiroException : SacoDoblesException {
-    		try {
-      			return self.tirarDadosUnaVez() + primerTiroException.valorDelTiro()
-    		}
-    		catch segundoTiroException : SacoDoblesException {
-      			throw new VaPresoException()
-    		}
-  		}
-	}
-	
-	method tirarDadosUnaVez() {
-  		const dado1 = self.tirarUnDado()
-  		const dado2 = self.tirarUnDado()
-  		
-		if (dado1 == dado2){
-			self.dejarDeEstarPreso()
-			throw new SacoDoblesException(valorDelTiro = dado1 + dado2)
-		}
-		return dado1 + dado2
-		}
-	
-	method tirarUnDado(){//Unico
-		return 1.randomUpTo(6).truncate(0)
-	}
-	
-	method dejarDeEstarPreso(){
-		turnosRestantesPreso = 0
-	}
-
-    method moverseSobre(unosCasilleros){
-		if(not self.estaPreso()){
-			unosCasilleros.forEach{unCasillero => unCasillero.paso(self)}
-			const ultimoCasillero = unosCasilleros.last()
-			ultimoCasillero.cayo(self)
-		}
-		else self.perderTurno()
-		
-	}
-	
-	method esSuPosicionActual(unCasillero){
-		return self.posicionActual() === unCasillero
-	}
-	
-	method irPreso(){
-		turnosRestantesPreso = 3
-		self.posicionActual(prision)
-	}
-
-    method turnosRestantesPreso() = turnosRestantesPreso
-	
-	method estaPreso()= self.esSuPosicionActual(prision) and self.turnosRestantesPreso() > 0
-	
-	method perderTurno(){
-		turnosRestantesPreso --
-	}
-
-
-*/

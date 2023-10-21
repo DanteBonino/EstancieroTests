@@ -1,12 +1,14 @@
 import casillero.*
 
 class Salida inherits Casillero{
+	/* Punto 6 */
     override method paso(unJugador){
         unJugador.cobrar(5000)
     }
 }
 
 class PremioGanadero inherits Casillero{
+	/* Punto 7 */
     override method cayo(unJugador){
         unJugador.cobrar(2500)
         super(unJugador)

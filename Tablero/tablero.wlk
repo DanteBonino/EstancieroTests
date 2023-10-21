@@ -4,7 +4,7 @@ import casillero.*
 class Tablero {
     const property salida 		  = new Salida()
     const property premioGanadero = new PremioGanadero ()
-    const property prision		  = new Casillero()
+    const property prision		  = new Casillero() //Punto 1 Parte 2
     const property casilleros     = [salida, premioGanadero, prision]//Debería crearse con todas las propiedades + casilleros especiales
     const property juego
     
@@ -19,9 +19,11 @@ class Tablero {
         return if (primero == unCasillero) unosCasilleros else self.casillerosDesde(unosCasilleros,unCasillero)
     }
     
+    /* No se usan, podrían usarse */
     method casillerosPropiedades() = casilleros.filter{unCasillero => not unCasillero.esCasilleroEspecial()}
     
     method casillerosEspeciales()  = casilleros.filter{unCasillero => unCasillero.esCasilleroEspecial()}
+    /* -------------------------- */
     
     /* Métodos de inicialización */
     method setearTablero(unasPropiedades){//Recibe mockPropiedades, crea las propiedades y las agrega al tablero
@@ -39,5 +41,8 @@ class Tablero {
     
     method banco () = juego.banco()
     
+    /* Punto 2 Parte 2 */
+    method empresasQueNoSon(unaEmpresa){
+    	return casilleros.filter{unCasillero=> unCasillero.esEmpresaYNoEsEsta(unaEmpresa)}
+    }
 }
-

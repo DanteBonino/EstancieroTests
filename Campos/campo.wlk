@@ -76,13 +76,8 @@ class CampoV2 inherits Propiedad{
     method noTieneMasEstanciasQue(unaCantidad) = cantidadDeEstancias <= unaCantidad
 
     /* Punto 2a */
-    override method sosEmpresa() = false
+    //override method sosEmpresa() = false
 
-    /* Metodos que surgieron por tests */
-    method asignarProvincia(unaProvincia){
-        //self.validarQueNoPertenezcaAOtraProvincia
-        provincia = unaProvincia
-    }
 
     /* Punto 4 */
     override method rentaPara(_unJugador){
@@ -98,12 +93,27 @@ class CampoV2 inherits Propiedad{
     	if(not(provincia.esMonopolioDe(self.banco()) or provincia.tieneAlgunCampo(unJugador))) throw elImperialistaNoCompraLaPropiedad
     }
     
-    /* Punto 2 Parte 2 */
+   
     method validarSiLaCompra(unJugador, unaEstrategia){
     	unaEstrategia.validarSiElCampoCumpleLosRequisitos(unJugador, self.provincia(), self.banco())
     }
     
+    */
+    
     method provincia () = provincia
+    
+    override method otrasPropiedadesDelRubro(){
+    	return provincia.camposQueNoSean(self)
+    }
+    
+    /* Para las estrategias en donde no se pueden usar polimórficamente a las propiedades */
+    method esComprablePor(unJugador, unaEstrategia){
+    	return unaEstrategia.esComprableElCampo(unJugador, self)
+    }
+ 	
+ 	method elJugadorEsDuenioDeAlgunaPropiedadDelRubro(unJugador){
+ 		return provincia.tieneAlgunCampo(unJugador)
+ 	}
     
     /* Punto 3 Parte 3 */
     override method valorDeHipoteca(){//Lo que paga el banco al jugador
@@ -111,4 +121,10 @@ class CampoV2 inherits Propiedad{
     }
     
     method valorDeHipotecaPorEstancia() = costoDeConstruccion / 2 
+    
+    /* Metodos que surgieron por tests */
+    method asignarProvincia(unaProvincia){
+        //self.validarQueNoPertenezcaAOtraProvincia
+        provincia = unaProvincia
+    }
 }

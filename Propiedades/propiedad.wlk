@@ -1,32 +1,45 @@
 import casillero.*
 import estatus.*
 
-class Propiedad{//Solo interfaz
-    var   property duenio 
+class Propiedad inherits Casillero{
+    var   property duenio /* Surge por por primera vez en el punto 1a en Campo */
     var   property valorDeCompra
     const property juego
-    var   property estatus       = libre
-
-    method sosEmpresa()
-
+    var   property estatus       = libre /* Surge en el Punto 3 Parte 2 */
+	
+	/* Punto 4 */
     method rentaPara(unJugador)
-
-    method paso(unJugador){
-        //No pasa nada
-    }
-
-    method cayo(unJugador){//Punto 7
+    
+	/* Punto 7 */
+    override method cayo(unJugador){
         duenio.accionDeTitularidadSobrePropiedad(unJugador, self)
     }
-
+	
+    
+    /* Punto 2 Parte 2 */
+    method hayOtrosDueniosEnElRubro(unJugador){
+    	return self.otrasPropiedadesDelRubro().any{unaPropiedad => unaPropiedad.lePerteneceAOtroJugador(unJugador)}
+    }
+    
+    method lePerteneceAOtroJugador(unJugador){
+    	return not self.esDe(unJugador) or self.esDe(self.banco()) 
+    }
+    
+    method otrasPropiedadesDelRubro()
+    
+	method elRubroEsMonopolioDelBanco(){
+		return self.otrasPropiedadesDelRubro().all{unaPropiedad => unaPropiedad.esDe(juego.banco())}
+	}
+	
+	 method esDe(unJugador) = duenio === unJugador
+	 
+		/* Punto 3 Parte 2 */
     method valorDeCompraActual () = estatus.valorDeCompra(self)
     
     method cambiarDuenio(nuevoDuenio){
     	duenio.eliminarPropiedad(self)
     	self.duenio(nuevoDuenio)
     }
-    
-    method esDe(unJugador) = duenio === unJugador
     
     method banco(){
     	return juego.banco()
@@ -45,51 +58,7 @@ class Propiedad{//Solo interfaz
     }
     
     method estaLibre () = self.valorDeCompraActual() === valorDeCompra
-
-}
-
-class PropiedadV2 inherits Casillero{//Deja de ser interfaz y las propiedades herendan de ella
-    var property duenio 
-    var valorDeCompra
-    const property juego
-    var property estatus = libre
-
-    method sosEmpresa()
-
-    method rentaPara(unJugador)
-    
-    override method cayo(unJugador){
-       duenio.accionDeTitularidadSobrePropiedad(unJugador, self)
-    }
-    
-    method valorDeCompraActual () = valorDeCompra
-    
-    override method esCasilleroEspecial() = false
-    
-    method cambiarDuenio(nuevoDuenio){
-    	duenio.eliminarPropiedad(self)
-    	self.duenio(nuevoDuenio)
-    }
-    
-    method esDe(unJugador) = duenio === unJugador
-    
-    method banco(){
-    	return juego.banco()
-    }
-    
-    method valorDeHipoteca(){
-    	return valorDeCompra/2
-    }
-    
-      method hipotecar(){
-    	self.estatus(hipotecada)
-    }
-    
-    method liberar(){
-    	self.estatus(libre)
-    }
-    
-    method estaLibre () = self.valorDeCompraActual() === valorDeCompra
+	/* Este último método podría ser distinto para empresas y para campos, en campos podría directamente preguntarle a la provincia si es monopolioDe */
 }
 
 /* 
