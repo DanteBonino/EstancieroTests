@@ -8,15 +8,19 @@ class NoPuedeRealizarElPago inherits wollok.lang.Exception{
 	override method message () = "El acreedor no puede realizar el pago correspondiente debido a que su saldo es insuficiente"
 }
 
-class SacoDoblesException inherits wollok.lang.Exception {
+class SacoDoblesException inherits ExcepcionesDeEstadoDelJugador {
 	const property valorDelTiro
 }
 
-class VaPreso inherits wollok.lang.Exception{
+class VaPreso inherits ExcepcionesDeEstadoDelJugador{
 	
 }
 
-class EsLibre inherits wollok.lang.Exception{
+class EsLibre inherits ExcepcionesDeEstadoDelJugador{
+	
+}
+
+class ExcepcionesDeEstadoDelJugador inherits wollok.lang.Exception{/* Se creó para catchear en Preso a las dos excepcione por igual */
 	
 }
 

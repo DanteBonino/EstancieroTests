@@ -93,6 +93,15 @@ class Jugador inherits Acreedor{
 		return dado1 + dado2
 	}
 	
+	method tirarDadosException(){
+		try{
+			return self.tirarDadosUnaVez()
+		}
+		catch primerTiroExcepcion : SacoDoblesException{
+			return self.tirarDadosUnaVez() + primerTiroExcepcion.valorDelTiro()
+		}
+	}
+	
 	method irPreso(){
 		self.cayoEn(prision)
 		self.estado(new Preso())

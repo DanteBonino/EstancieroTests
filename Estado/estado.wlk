@@ -4,18 +4,11 @@ object libre {
 	/* Punto 2 Parte 2 */
 	method jugar(unJugador){
 		try{
-			const cantidadObtenida = unJugador.tirarDadosUnaVez()
-			unJugador.jugarHabiendoTirado(cantidadObtenida)
+			unJugador.jugarHabiendoTirado(unJugador.tirarDadosException())
 		}
-		catch primerTiroException : SacoDoblesException {
-    		try {
-      			unJugador.jugarHabiendoTirado(unJugador.tirarDadosUnaVez() + primerTiroException.valorDelTiro())
-    		}
-    		catch segundoTiroException : SacoDoblesException {
-      			unJugador.irPreso()
-    		}
+		catch dobleDobleException : SacoDoblesException{
+			unJugador.irPreso()
 		}
-	
 	}
 	method turnosEnPrisionRestantes() = 0
 }
@@ -30,12 +23,9 @@ class Preso {
 			turnosEnPrisionRestantes --
 			unJugador.tirarDadosUnaVez()
 		}
-		catch primerTiroException : SacoDoblesException {
+		catch quedoEnLibertad : ExcepcionesDeEstadoDelJugador {
 			self.quedoEnLibertad(unJugador)
 		}
-		catch quedoEnLibertad     : EsLibre {
-			self.quedoEnLibertad(unJugador)
-		}	
 	}
 	
 	method quedoEnLibertad(unJugador){
